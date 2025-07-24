@@ -14,9 +14,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-//import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-
 const sectors = [
   "Uttar Pradesh",
   "Maharashtra",
@@ -49,7 +47,8 @@ const PackageEntryForm = () => {
       }),
     }),
     onSubmit: (values) => {
-      console.log("Form submitted:", values, stayLocationList);
+      console.log("Form submitted:", values);
+      console.log("Stay Locations:", stayLocationList);
     },
   });
 
@@ -83,29 +82,15 @@ const PackageEntryForm = () => {
     const { source, destination } = result;
     if (!destination) return;
 
-    const sourceList =
-      source.droppableId === "locationList"
-        ? [...locationList]
-        : [...stayLocationList]; 
-    const destList =
-      destination.droppableId === "locationList"
-        ? [...locationList]
-        : [...stayLocationList];
+    if (source.droppableId === destination.droppableId) return;
 
-    const [movedItem] = sourceList.splice(source.index, 1);
-    destList.splice(destination.index, 0, movedItem);
-
-    if (source.droppableId === destination.droppableId) {
-      if (source.droppableId === "locationList") setLocationList(destList);
-      else setStayLocationList(destList);
-    } else {
-      if (source.droppableId === "locationList") {
-        setLocationList(sourceList);
-        setStayLocationList(destList);
-      } else {
-        setLocationList(destList);
-        setStayLocationList(sourceList);
-      }
+   
+    if (source.droppableId === "locationList" && destination.droppableId === "stayLocationList") {
+      const sourceItems = [...locationList];
+      const [movedItem] = sourceItems.splice(source.index, 1);
+      const updatedStayList = [...stayLocationList, { name: movedItem, nights: "" }];
+      setLocationList(sourceItems);
+      setStayLocationList(updatedStayList);
     }
   };
 
@@ -129,16 +114,8 @@ const PackageEntryForm = () => {
                 value={tourType}
                 onChange={handleTourTypeChange}
               >
-                <FormControlLabel
-                  value="Domestic"
-                  control={<Radio />}
-                  label="Domestic"
-                />
-                <FormControlLabel
-                  value="International"
-                  control={<Radio />}
-                  label="International"
-                />
+                <FormControlLabel value="Domestic" control={<Radio />} label="Domestic" />
+                <FormControlLabel value="International" control={<Radio />} label="International" />
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -202,14 +179,8 @@ const PackageEntryForm = () => {
                 name="destinationCountry"
                 value={formik.values.destinationCountry}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.destinationCountry &&
-                  Boolean(formik.errors.destinationCountry)
-                }
-                helperText={
-                  formik.touched.destinationCountry &&
-                  formik.errors.destinationCountry
-                }
+                error={formik.touched.destinationCountry && Boolean(formik.errors.destinationCountry)}
+                helperText={formik.touched.destinationCountry && formik.errors.destinationCountry}
               >
                 {countries.map((country) => (
                   <MenuItem key={country} value={country}>
@@ -223,7 +194,7 @@ const PackageEntryForm = () => {
           <Grid size={{xs:12}}>
             <DragDropContext onDragEnd={handleDragEnd}>
               <Grid container spacing={2}>
-                {/* Source List */}
+                {/* Location List */}
                 <Grid size={{xs:12, sm:6}}>
                   <Typography variant="subtitle2" color="primary">
                     Location
@@ -246,11 +217,7 @@ const PackageEntryForm = () => {
                         }}
                       >
                         {locationList.map((city, index) => (
-                          <Draggable
-                            key={city}
-                            draggableId={city}
-                            index={index}
-                          >
+                          <Draggable key={city} draggableId={city} index={index}>
                             {(provided) => (
                               <Box
                                 ref={provided.innerRef}
@@ -261,8 +228,8 @@ const PackageEntryForm = () => {
                                   p: 1,
                                   bgcolor: "#f5f5f5",
                                   borderRadius: 1,
-                                  boxShadow: 1,
                                   cursor: "grab",
+                                  boxShadow: 1,
                                 }}
                               >
                                 {city}
@@ -276,13 +243,13 @@ const PackageEntryForm = () => {
                   </Droppable>
                 </Grid>
 
-                {/* Destination List */}
+                {/* Stay Location List with Nights */}
                 <Grid size={{xs:12, sm:6}}>
                   <Typography variant="subtitle2" color="primary">
                     Stay Location
                   </Typography>
                   <Typography variant="caption" color="error">
-                    Arrange Cities according to Itinerary Order
+                    Arrange Cities & Assign Nights
                   </Typography>
                   <Droppable droppableId="stayLocationList">
                     {(provided) => (
@@ -299,26 +266,34 @@ const PackageEntryForm = () => {
                         }}
                       >
                         {stayLocationList.map((city, index) => (
-                          <Draggable
-                            key={city}
-                            draggableId={city}
-                            index={index}
-                          >
+                          <Draggable key={city.name} draggableId={city.name} index={index}>
                             {(provided) => (
                               <Box
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 sx={{
-                                  mb: 1,
+                                  mb: 2,
                                   p: 1,
                                   bgcolor: "#e8f4fd",
                                   borderRadius: 1,
                                   boxShadow: 1,
-                                  cursor: "grab",
                                 }}
                               >
-                                {city}
+                                <Typography>{city.name}</Typography>
+                                <TextField
+                                  fullWidth
+                                  label="Number of Nights"
+                                  type="number"
+                                  size="small"
+                                  value={city.nights}
+                                  onChange={(e) => {
+                                    const updated = [...stayLocationList];
+                                    updated[index].nights = e.target.value;
+                                    setStayLocationList(updated);
+                                  }}
+                                  sx={{ mt: 1 }}
+                                />
                               </Box>
                             )}
                           </Draggable>
@@ -333,11 +308,7 @@ const PackageEntryForm = () => {
           </Grid>
 
           <Grid size={{xs:12}} textAlign="center" mt={2}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ bgcolor: "#4db9f3" }}
-            >
+            <Button type="submit" variant="contained" sx={{ bgcolor: "#4db9f3" }}>
               Save & Continue
             </Button>
           </Grid>
