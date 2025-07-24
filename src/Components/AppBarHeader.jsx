@@ -18,11 +18,30 @@ import {
   CalendarToday,
   Storage,
 } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
 
 const DashboardHeader = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const location = useLocation();
+
+  
+  const pageTitles = {
+    "/": "Dashboard",
+    "/lead": "Leads Manager",
+    "/quotation": "Quotation Manager",
+    "/hotel": "Hotel Manager",
+    "/tourpackage": "Package Manager",
+    "/payment": "Payment Manager",
+    "/invoice": "Invoice Manager",
+    "/associates": "Business Associates Manager",
+    "/staff": "Staff Manager",
+    "/setting": "Settings",
+    "/profile": "Profile",
+  };
+
+  const title = pageTitles[location.pathname] || "Page";
 
   return (
     <AppBar position="static" color="inherit" elevation={1}>
@@ -36,7 +55,7 @@ const DashboardHeader = () => {
           py: isMobile ? 1 : 0,
         }}
       >
-        {/* Left Section: Toggle + Title */}
+      
         <Box
           sx={{
             display: "flex",
@@ -58,12 +77,12 @@ const DashboardHeader = () => {
           >
             <ChevronLeft />
           </IconButton>
-          <Typography variant="h6" color="primary" fontWeight={500}>
-            Dashboard
+          <Typography variant="h5" color="primary" fontWeight="bold">
+            {title}
           </Typography>
         </Box>
 
-        {/* Center Logo - Hidden on mobile (shown in bottom section) */}
+        {/* Center Logo - Hidden on mobile */}
         {!isMobile && (
           <Box
             sx={{

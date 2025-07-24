@@ -9,6 +9,9 @@ import LeadEditForm from '../Pages/Admin/Lead/Form/LeadEditForm'
 import HotelCard from '../Pages/Admin/Hotel/HotelCard'
 import HotelForm from '../Pages/Admin/Hotel/Form/HotelForm';
 import HotelEditForm from '../Pages/Admin/Hotel/Form/HotelEditForm';
+import PackageCard from '../Pages/Admin/TourPackage/PackageCard';
+import PackageForm from '../Pages/Admin/TourPackage/Form/PackageForm';
+import PackageEditForm from '../Pages/Admin/TourPackage/Form/PackagrEditForm';
 
 const MainRoute = () => {
     const isAuthenticated = true; 
@@ -24,10 +27,14 @@ const MainRoute = () => {
                <Route path="/lead/leadeditform" element={<LeadEditForm/>} />
 
                {/*Hotel Routing */}
-
                <Route path='/hotel' element={<HotelCard />} />
                <Route path='/hotelform' element={<HotelForm />} />
                <Route path='/hotel/hoteleditform' element={<HotelEditForm />} />
+
+               {/* Package Routing */}
+               <Route path='/tourpackage' element={<PackageCard />} />
+               <Route path='/packageform' element={<PackageForm />} />
+               <Route path='/tourpackage/packageeditform' element={<PackageEditForm />} />
 
 
 

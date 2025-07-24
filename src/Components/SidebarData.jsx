@@ -16,7 +16,7 @@ export const sidebarItems = [
     { label: 'Leads', route: '/lead', icon: <LeaderboardIcon /> },
     { label: 'Quotation', route: '/quotation', icon: <FormatQuoteIcon /> },
     { label: 'Hotel', route: '/hotel', icon: <HotelIcon /> },
-    { label: 'Package', route: '/package', icon: <Inventory2Icon /> },
+    { label: 'Package', route: '/tourpackage', icon: <Inventory2Icon /> },
     { label: 'Payments', route: '/payment', icon: <PaymentsIcon /> },
     { label: 'Invoice', route: '/invoice', icon: <ReceiptIcon /> },
     { label: 'Associates', route: '/associates', icon: <PersonIcon /> },
