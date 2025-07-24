@@ -12,6 +12,9 @@ import HotelEditForm from '../Pages/Admin/Hotel/Form/HotelEditForm';
 import PackageCard from '../Pages/Admin/TourPackage/PackageCard';
 import PackageForm from '../Pages/Admin/TourPackage/Form/PackageForm';
 import PackageEditForm from '../Pages/Admin/TourPackage/Form/PackagrEditForm';
+import AssociatesCard from '../Pages/Admin/Associates/AssociatesCard';
+import AssociatesForm from '../Pages/Admin/Associates/Form/AssociatesForm';
+import AssociatesEditFrom from '../Pages/Admin/Associates/Form/AssociatesEditFrom';
 
 const MainRoute = () => {
     const isAuthenticated = true; 
@@ -35,6 +38,12 @@ const MainRoute = () => {
                <Route path='/tourpackage' element={<PackageCard />} />
                <Route path='/packageform' element={<PackageForm />} />
                <Route path='/tourpackage/packageeditform' element={<PackageEditForm />} />
+
+
+               {/* Associates Route */}
+               <Route path='/associates' element={<AssociatesCard />}/>
+               <Route path='/associatesform' element={<AssociatesForm />}/>
+               <Route path='/associates/associateseditform' element={<AssociatesEditFrom />}/>
 
 
 

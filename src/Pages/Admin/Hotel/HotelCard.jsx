@@ -39,23 +39,23 @@ const initialData = [
   },
 ];
 
-const LeadDashboard = () => {
+const HotelDashboard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [leadList, setLeadList] = useState(initialData);
+  const [hotelList, setHotelList] = useState(initialData);
 
   const handleAddClick = () => {
     navigate("/hotelform");
   };
 
   const handleEditClick = (row) => {
-    navigate("/hotel/hoteleditform", { state: { leadData: row } });
+    navigate("/hotel/hoteleditform", { state: { hotelData: row } });
   };
 
   const handleDeleteClick = (id) => {
-    const updatedList = leadList.filter((lead) => lead.id !== id);
-    setLeadList(updatedList);
+    const updatedList = hotelList.filter((hotel) => hotel.id !== id);
+    setHotelList(updatedList);
   };
 
   const columns = [
@@ -94,7 +94,7 @@ const LeadDashboard = () => {
   ];
 
   const filteredData = useMemo(() => {
-    return leadList.filter((h) => {
+    return hotelList.filter((h) => {
       const matchesStatus =
         statusFilter === "" || h.status.toLowerCase() === statusFilter;
       const matchesSearch =
@@ -103,7 +103,7 @@ const LeadDashboard = () => {
         h.email.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
     });
-  }, [statusFilter, searchQuery, leadList]);
+  }, [statusFilter, searchQuery, hotelList]);
 
   return (
     <Container maxWidth="xl">
@@ -185,4 +185,4 @@ const LeadDashboard = () => {
   );
 };
 
-export default LeadDashboard;
+export default HotelDashboard;

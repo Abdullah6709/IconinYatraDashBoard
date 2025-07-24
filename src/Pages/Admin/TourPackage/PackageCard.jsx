@@ -16,7 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const initialData = [
   {
-   id: 1,
+    id: 1,
     packageId: 34,
     sector: "Goa",
     title: "Amazing Goa Weekend",
@@ -24,7 +24,7 @@ const initialData = [
     tourType: "Domestic",
     packageType: "Beach Holiday",
     status: "deactive",
-    pkgType: "Own"
+    pkgType: "Own",
   },
   {
     id: 2,
@@ -35,27 +35,27 @@ const initialData = [
     tourType: "Domestic",
     packageType: "Club Holiday",
     status: "Active",
-    pkgType: "Trv"
+    pkgType: "Trv",
   },
 ];
 
-const LeadDashboard = () => {
+const PackageDashboard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [leadList, setLeadList] = useState(initialData);
+  const [packageList, setPackageList] = useState(initialData);
 
   const handleAddClick = () => {
     navigate("/packageform");
   };
 
   const handleEditClick = (row) => {
-    navigate("/tourpackage/packageeditform", { state: { leadData: row } });
+    navigate("/tourpackage/packageeditform", { state: { packageData: row } });
   };
 
   const handleDeleteClick = (id) => {
-    const updatedList = leadList.filter((lead) => lead.id !== id);
-    setLeadList(updatedList);
+    const updatedList = packageList.filter((pkg) => pkg.id !== id);
+    setPackageList(updatedList);
   };
 
   const columns = [
@@ -94,16 +94,16 @@ const LeadDashboard = () => {
   ];
 
   const filteredData = useMemo(() => {
-    return leadList.filter((h) => {
+    return packageList.filter((pkg) => {
       const matchesStatus =
-        statusFilter === "" || h.status.toLowerCase() === statusFilter;
+        statusFilter === "" || pkg.status.toLowerCase() === statusFilter;
       const matchesSearch =
-        h.tourType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        h.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        h.sector.toLowerCase().includes(searchQuery.toLowerCase());
+        pkg.tourType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pkg.sector.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
     });
-  }, [statusFilter, searchQuery, leadList]);
+  }, [statusFilter, searchQuery, packageList]);
 
   return (
     <Container maxWidth="xl">
@@ -185,4 +185,4 @@ const LeadDashboard = () => {
   );
 };
 
-export default LeadDashboard;
+export default PackageDashboard;
