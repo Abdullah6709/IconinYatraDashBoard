@@ -14,7 +14,8 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+//import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const sectors = [
   "Uttar Pradesh",
@@ -55,8 +56,6 @@ const PackageEntryForm = () => {
   const handleTourTypeChange = (e) => {
     const selectedType = e.target.value;
     setTourType(selectedType);
-
-    // Reset all form fields and drag-drop lists
     formik.setValues({
       tourType: selectedType,
       sector: "",
@@ -82,40 +81,30 @@ const PackageEntryForm = () => {
 
   const handleDragEnd = (result) => {
     const { source, destination } = result;
-
     if (!destination) return;
 
+    const sourceList =
+      source.droppableId === "locationList"
+        ? [...locationList]
+        : [...stayLocationList]; 
+    const destList =
+      destination.droppableId === "locationList"
+        ? [...locationList]
+        : [...stayLocationList];
+
+    const [movedItem] = sourceList.splice(source.index, 1);
+    destList.splice(destination.index, 0, movedItem);
+
     if (source.droppableId === destination.droppableId) {
-      const items =
-        source.droppableId === "locationList"
-          ? Array.from(locationList)
-          : Array.from(stayLocationList);
-      const [movedItem] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, movedItem);
-
-      if (source.droppableId === "locationList") {
-        setLocationList(items);
-      } else {
-        setStayLocationList(items);
-      }
+      if (source.droppableId === "locationList") setLocationList(destList);
+      else setStayLocationList(destList);
     } else {
-      const sourceList =
-        source.droppableId === "locationList"
-          ? Array.from(locationList)
-          : Array.from(stayLocationList);
-      const destList =
-        destination.droppableId === "stayLocationList"
-          ? Array.from(stayLocationList)
-          : Array.from(locationList);
-      const [movedItem] = sourceList.splice(source.index, 1);
-      destList.splice(destination.index, 0, movedItem);
-
       if (source.droppableId === "locationList") {
         setLocationList(sourceList);
         setStayLocationList(destList);
       } else {
-        setStayLocationList(sourceList);
         setLocationList(destList);
+        setStayLocationList(sourceList);
       }
     }
   };
@@ -140,8 +129,16 @@ const PackageEntryForm = () => {
                 value={tourType}
                 onChange={handleTourTypeChange}
               >
-                <FormControlLabel value="Domestic" control={<Radio />} label="Domestic" />
-                <FormControlLabel value="International" control={<Radio />} label="International" />
+                <FormControlLabel
+                  value="Domestic"
+                  control={<Radio />}
+                  label="Domestic"
+                />
+                <FormControlLabel
+                  value="International"
+                  control={<Radio />}
+                  label="International"
+                />
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -205,8 +202,14 @@ const PackageEntryForm = () => {
                 name="destinationCountry"
                 value={formik.values.destinationCountry}
                 onChange={formik.handleChange}
-                error={formik.touched.destinationCountry && Boolean(formik.errors.destinationCountry)}
-                helperText={formik.touched.destinationCountry && formik.errors.destinationCountry}
+                error={
+                  formik.touched.destinationCountry &&
+                  Boolean(formik.errors.destinationCountry)
+                }
+                helperText={
+                  formik.touched.destinationCountry &&
+                  formik.errors.destinationCountry
+                }
               >
                 {countries.map((country) => (
                   <MenuItem key={country} value={country}>
@@ -220,6 +223,7 @@ const PackageEntryForm = () => {
           <Grid size={{xs:12}}>
             <DragDropContext onDragEnd={handleDragEnd}>
               <Grid container spacing={2}>
+                {/* Source List */}
                 <Grid size={{xs:12, sm:6}}>
                   <Typography variant="subtitle2" color="primary">
                     Location
@@ -234,14 +238,19 @@ const PackageEntryForm = () => {
                         {...provided.droppableProps}
                         sx={{
                           border: "1px solid #ccc",
-                          height: 200,
-                          overflowY: "auto",
+                          minHeight: 200,
+                          backgroundColor: "#fff",
                           mt: 1,
                           p: 1,
+                          borderRadius: 1,
                         }}
                       >
                         {locationList.map((city, index) => (
-                          <Draggable key={city} draggableId={city} index={index}>
+                          <Draggable
+                            key={city}
+                            draggableId={city}
+                            index={index}
+                          >
                             {(provided) => (
                               <Box
                                 ref={provided.innerRef}
@@ -252,6 +261,7 @@ const PackageEntryForm = () => {
                                   p: 1,
                                   bgcolor: "#f5f5f5",
                                   borderRadius: 1,
+                                  boxShadow: 1,
                                   cursor: "grab",
                                 }}
                               >
@@ -266,6 +276,7 @@ const PackageEntryForm = () => {
                   </Droppable>
                 </Grid>
 
+                {/* Destination List */}
                 <Grid size={{xs:12, sm:6}}>
                   <Typography variant="subtitle2" color="primary">
                     Stay Location
@@ -280,14 +291,19 @@ const PackageEntryForm = () => {
                         {...provided.droppableProps}
                         sx={{
                           border: "1px solid #ccc",
-                          height: 200,
-                          overflowY: "auto",
+                          minHeight: 200,
+                          backgroundColor: "#fff",
                           mt: 1,
                           p: 1,
+                          borderRadius: 1,
                         }}
                       >
                         {stayLocationList.map((city, index) => (
-                          <Draggable key={city} draggableId={city} index={index}>
+                          <Draggable
+                            key={city}
+                            draggableId={city}
+                            index={index}
+                          >
                             {(provided) => (
                               <Box
                                 ref={provided.innerRef}
@@ -298,6 +314,7 @@ const PackageEntryForm = () => {
                                   p: 1,
                                   bgcolor: "#e8f4fd",
                                   borderRadius: 1,
+                                  boxShadow: 1,
                                   cursor: "grab",
                                 }}
                               >
@@ -316,7 +333,11 @@ const PackageEntryForm = () => {
           </Grid>
 
           <Grid size={{xs:12}} textAlign="center" mt={2}>
-            <Button type="submit" variant="contained" sx={{ bgcolor: "#4db9f3" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ bgcolor: "#4db9f3" }}
+            >
               Save & Continue
             </Button>
           </Grid>

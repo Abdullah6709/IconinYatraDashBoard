@@ -37,7 +37,7 @@ const initialAssociates = [
     from: "Noida",
   },
   {
-     id: 1,
+     id: 2,
     associateId: 32,
     associateType: "Sub Agent",
     associateName: "Raj Kumar",
