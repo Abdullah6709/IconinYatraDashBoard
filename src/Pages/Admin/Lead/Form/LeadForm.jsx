@@ -20,6 +20,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import AssociateDetailForm from "../../Associates/Form/AssociatesForm";
 
 const validationSchema = Yup.object({
   fullName: Yup.string().required("Name is required"),
@@ -32,6 +33,7 @@ const CustomerDetailForm = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newValue, setNewValue] = useState("");
   const [activeField, setActiveField] = useState("");
+  const [showAssociateForm, setShowAssociateForm] = useState(false);
 
   const [dropdownOptions, setDropdownOptions] = useState({
     title: ["Mr", "Ms", "Mrs"],
@@ -40,6 +42,9 @@ const CustomerDetailForm = () => {
     agentName: [],
     assignedTo: ["Staff A", "Staff B"],
     priority: ["High", "Medium", "Low"],
+    country: ["India", "USA", "Canada"],
+    state: ["Karnataka", "Maharashtra"],
+    city: ["Bangalore", "Mumbai"],
   });
 
   const formik = useFormik({
@@ -72,16 +77,21 @@ const CustomerDetailForm = () => {
   });
 
   const handleAddNewClick = (field) => {
-    setActiveField(field);
-    setNewValue("");
-    setDialogOpen(true);
+    if (["assignedTo", "referralBy", "agentName"].includes(field)) {
+      setActiveField(field);
+      setShowAssociateForm(true);
+    } else {
+      setActiveField(field);
+      setNewValue("");
+      setDialogOpen(true);
+    }
   };
 
   const handleAddNewValue = () => {
     if (newValue.trim() !== "") {
       setDropdownOptions((prev) => ({
         ...prev,
-        [activeField]: [...(prev[activeField] || []), newValue.trim()],
+        [activeField]: [...new Set([...(prev[activeField] || []), newValue.trim()])],
       }));
       formik.setFieldValue(activeField, newValue.trim());
       setDialogOpen(false);
@@ -95,6 +105,16 @@ const CustomerDetailForm = () => {
     } else {
       formik.setFieldValue(name, value);
     }
+  };
+
+  const handleAssociateSave = (newName) => {
+    if (!newName) return;
+    setDropdownOptions((prev) => ({
+      ...prev,
+      [activeField]: [...new Set([...(prev[activeField] || []), newName])],
+    }));
+    formik.setFieldValue(activeField, newName);
+    setShowAssociateForm(false);
   };
 
   const renderSelectField = (label, name, options = []) => (
@@ -185,13 +205,13 @@ const CustomerDetailForm = () => {
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{xs:12, sm:4}}>
-            {renderTextField("Country", "country")}
+            {renderSelectField("Country", "country", dropdownOptions.country)}
           </Grid>
           <Grid size={{xs:12, sm:4}}>
-            {renderTextField("State", "state")}
+            {renderSelectField("State", "state", dropdownOptions.state)}
           </Grid>
           <Grid size={{xs:12, sm:4}}>
-            {renderTextField("City", "city")}
+            {renderSelectField("City", "city", dropdownOptions.city)}
           </Grid>
         </Grid>
       </Box>
@@ -232,10 +252,12 @@ const CustomerDetailForm = () => {
             {renderSelectField("Priority", "priority", dropdownOptions.priority)}
             {renderSelectField("Source *", "source", dropdownOptions.source)}
 
-            {formik.values.source === "Referral" &&
+            {formik.values.businessType === "B2B" &&
+              formik.values.source === "Referral" &&
               renderSelectField("Referral By", "referralBy", dropdownOptions.referralBy)}
 
-            {formik.values.source === "Agent's" &&
+            {formik.values.businessType === "B2B" &&
+              formik.values.source === "Agent's" &&
               renderSelectField("Agent Name", "agentName", dropdownOptions.agentName)}
 
             {renderSelectField("Assigned To *", "assignedTo", dropdownOptions.assignedTo)}
@@ -275,7 +297,7 @@ const CustomerDetailForm = () => {
         )}
       </Box>
 
-      {/* Add New Modal */}
+      {/* Add New Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Add New</DialogTitle>
         <DialogContent>
@@ -293,6 +315,18 @@ const CustomerDetailForm = () => {
             Add
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Associate Form Dialog */}
+      <Dialog
+        open={showAssociateForm}
+        onClose={() => setShowAssociateForm(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <AssociateDetailForm onSave={handleAssociateSave} />
+        </DialogContent>
       </Dialog>
     </Box>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,19 +7,18 @@ import {
   TextField,
   Typography,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 
-const countries = ["Albania", "India", "USA", "Canada"];
-const states = ["State 1", "State 2"];
-const cities = ["City 1", "City 2"];
 const titles = ["Mr.", "Ms.", "Mrs.", "Dr."];
-const associateTypes = ["Type A", "Type B"];
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("Required"),
@@ -33,6 +32,35 @@ const validationSchema = Yup.object({
 });
 
 const AssociateDetailForm = () => {
+  const [associateTypes, setAssociateTypes] = useState(["Type A", "Type B"]);
+  const [countries, setCountries] = useState(["Albania", "India", "USA"]);
+  const [states, setStates] = useState(["State 1", "State 2"]);
+  const [cities, setCities] = useState(["City 1", "City 2"]);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogLabel, setDialogLabel] = useState("");
+  const [dialogType, setDialogType] = useState(""); // associateType | country | state | city
+  const [newValue, setNewValue] = useState("");
+
+  const openAddDialog = (label, type) => {
+    setDialogLabel(label);
+    setDialogType(type);
+    setNewValue("");
+    setDialogOpen(true);
+  };
+
+  const handleAddNew = () => {
+    if (!newValue.trim()) return;
+    const add = (setter, values) => {
+      if (!values.includes(newValue)) setter([...values, newValue]);
+    };
+    if (dialogType === "associateType") add(setAssociateTypes, associateTypes);
+    if (dialogType === "country") add(setCountries, countries);
+    if (dialogType === "state") add(setStates, states);
+    if (dialogType === "city") add(setCities, cities);
+    setDialogOpen(false);
+  };
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -89,9 +117,7 @@ const AssociateDetailForm = () => {
                 size="small"
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.firstName && Boolean(formik.errors.firstName)
-                }
+                error={formik.touched.firstName && Boolean(formik.errors.firstName)}
                 helperText={formik.touched.firstName && formik.errors.firstName}
               />
             </Grid>
@@ -103,9 +129,7 @@ const AssociateDetailForm = () => {
                 size="small"
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.lastName && Boolean(formik.errors.lastName)
-                }
+                error={formik.touched.lastName && Boolean(formik.errors.lastName)}
                 helperText={formik.touched.lastName && formik.errors.lastName}
               />
             </Grid>
@@ -137,20 +161,22 @@ const AssociateDetailForm = () => {
                 fullWidth
                 size="small"
                 value={formik.values.associateType}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.associateType &&
-                  Boolean(formik.errors.associateType)
-                }
-                helperText={
-                  formik.touched.associateType && formik.errors.associateType
-                }
+                onChange={(e) => {
+                  if (e.target.value === "add_new") {
+                    openAddDialog("Associate Type", "associateType");
+                  } else {
+                    formik.setFieldValue("associateType", e.target.value);
+                  }
+                }}
+                error={formik.touched.associateType && Boolean(formik.errors.associateType)}
+                helperText={formik.touched.associateType && formik.errors.associateType}
               >
                 {associateTypes.map((type) => (
                   <MenuItem key={type} value={type}>
                     {type}
                   </MenuItem>
                 ))}
+                <MenuItem value="add_new">+ Add New</MenuItem>
               </TextField>
             </Grid>
             <Grid size={{xs:12, sm:6, md:3}}>
@@ -211,7 +237,13 @@ const AssociateDetailForm = () => {
                 fullWidth
                 size="small"
                 value={formik.values.country}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  if (e.target.value === "add_new") {
+                    openAddDialog("Country", "country");
+                  } else {
+                    formik.setFieldValue("country", e.target.value);
+                  }
+                }}
                 error={formik.touched.country && Boolean(formik.errors.country)}
                 helperText={formik.touched.country && formik.errors.country}
               >
@@ -220,6 +252,7 @@ const AssociateDetailForm = () => {
                     {c}
                   </MenuItem>
                 ))}
+                <MenuItem value="add_new">+ Add New</MenuItem>
               </TextField>
             </Grid>
             <Grid size={{xs:12, sm:4}}>
@@ -230,7 +263,13 @@ const AssociateDetailForm = () => {
                 fullWidth
                 size="small"
                 value={formik.values.state}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  if (e.target.value === "add_new") {
+                    openAddDialog("State", "state");
+                  } else {
+                    formik.setFieldValue("state", e.target.value);
+                  }
+                }}
                 error={formik.touched.state && Boolean(formik.errors.state)}
                 helperText={formik.touched.state && formik.errors.state}
               >
@@ -239,6 +278,7 @@ const AssociateDetailForm = () => {
                     {s}
                   </MenuItem>
                 ))}
+                <MenuItem value="add_new">+ Add New</MenuItem>
               </TextField>
             </Grid>
             <Grid size={{xs:12, sm:4}}>
@@ -249,7 +289,13 @@ const AssociateDetailForm = () => {
                 fullWidth
                 size="small"
                 value={formik.values.city}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  if (e.target.value === "add_new") {
+                    openAddDialog("City", "city");
+                  } else {
+                    formik.setFieldValue("city", e.target.value);
+                  }
+                }}
                 error={formik.touched.city && Boolean(formik.errors.city)}
                 helperText={formik.touched.city && formik.errors.city}
               >
@@ -258,6 +304,7 @@ const AssociateDetailForm = () => {
                     {c}
                   </MenuItem>
                 ))}
+                <MenuItem value="add_new">+ Add New</MenuItem>
               </TextField>
             </Grid>
           </Grid>
@@ -322,6 +369,26 @@ const AssociateDetailForm = () => {
           </Button>
         </Box>
       </form>
+
+      {/* Add New Dialog */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Add New {dialogLabel}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label={`New ${dialogLabel}`}
+            value={newValue}
+            onChange={(e) => setNewValue(e.target.value)}
+            fullWidth
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNewValue("")}>Clear</Button>
+          <Button onClick={handleAddNew} variant="contained">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

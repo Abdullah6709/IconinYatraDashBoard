@@ -29,6 +29,10 @@ const validationSchema = Yup.object().shape({
   description: Yup.string().required("Required"),
   cancellationPolicy: Yup.string().required("Required"),
   facilities: Yup.string().required("Required"),
+  mainImage: Yup.mixed()
+    .required("Main image is required")
+    .test("fileSize", "File too large", (value) => !value || value.size <= 2 * 1024 * 1024)
+    .test("fileType", "Unsupported format", (value) => !value || ["image/jpeg", "image/png"].includes(value.type)),
   country: Yup.string().required("Required"),
   state: Yup.string().required("Required"),
   city: Yup.string().required("Required"),
@@ -109,19 +113,28 @@ const HotelEntryForm = () => {
         Hotel Entry Form
       </Typography>
 
+      {/* Hotel Details */}
       <Box border={1} borderRadius={1} p={2} mb={3}>
         <Typography variant="subtitle1">Hotel Details</Typography>
         <Grid container spacing={2} mt={1}>
-          <Grid size={{xs:12, sm:6}}>{renderField("hotelName", "Hotel Name")}</Grid>
+          <Grid size={{xs:12, sm:6}}>
+            {renderField("hotelName", "Hotel Name")}
+          </Grid>
           <Grid size={{xs:12, sm:6}}>
             {viewMode ? (
               renderField("hotelType", "Hotel Type")
             ) : (
               <FormControl fullWidth size="small" required>
                 <InputLabel>Hotel Type</InputLabel>
-                <Select name="hotelType" value={formik.values.hotelType} onChange={formik.handleChange}>
+                <Select
+                  name="hotelType"
+                  value={formik.values.hotelType}
+                  onChange={formik.handleChange}
+                >
                   {hotelTypes.map((type) => (
-                    <MenuItem key={type} value={type}>{type}</MenuItem>
+                    <MenuItem key={type} value={type}>
+                      {type}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -135,9 +148,44 @@ const HotelEntryForm = () => {
           <Grid size={{xs:12}}>{renderField("description", "Hotel Description", true, 2)}</Grid>
           <Grid size={{xs:12}}>{renderField("cancellationPolicy", "Cancellation Policy", true, 2)}</Grid>
           <Grid size={{xs:12}}>{renderField("facilities", "Facilities")}</Grid>
+
+          {/* Main Image Upload Field */}
+          <Grid size={{xs:12}}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Main Image (For best view Image size - 1300px X 400px)
+            </Typography>
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              disabled={viewMode}
+            >
+              Choose File
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                name="mainImage"
+                onChange={(event) => {
+                  formik.setFieldValue("mainImage", event.currentTarget.files[0]);
+                }}
+              />
+            </Button>
+            {formik.values.mainImage && (
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {formik.values.mainImage.name}
+              </Typography>
+            )}
+            {formik.touched.mainImage && formik.errors.mainImage && (
+              <Typography variant="caption" color="error">
+                {formik.errors.mainImage}
+              </Typography>
+            )}
+          </Grid>
         </Grid>
       </Box>
 
+      {/* Hotel Location */}
       <Box border={1} borderRadius={1} p={2} mb={3}>
         <Typography variant="subtitle1">Hotel Location</Typography>
         <Grid container spacing={2} mt={1}>
@@ -153,6 +201,7 @@ const HotelEntryForm = () => {
         </Grid>
       </Box>
 
+      {/* Social Media */}
       <Box border={1} borderRadius={1} p={2} mb={3}>
         <Typography variant="subtitle1">Social Media</Typography>
         <Grid container spacing={2} mt={1}>
@@ -165,19 +214,31 @@ const HotelEntryForm = () => {
         </Grid>
       </Box>
 
+      {/* Hotel Policy */}
       <Box border={1} borderRadius={1} p={2} mb={3}>
         <Typography variant="subtitle1">Hotel Policy</Typography>
         {renderField("policy", "Hotel Policy", true, 4)}
       </Box>
 
+      {/* Submit Buttons */}
       <Box textAlign="center">
         {viewMode ? (
           <>
-            <Button variant="contained" color="primary" sx={{ mr: 2 }}>Continue</Button>
-            <Button variant="outlined" color="secondary" onClick={() => setViewMode(false)}>Cancel</Button>
+            <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+              Continue
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setViewMode(false)}
+            >
+              Cancel
+            </Button>
           </>
         ) : (
-          <Button variant="contained" color="primary" type="submit">View</Button>
+          <Button variant="contained" color="primary" type="submit">
+            View
+          </Button>
         )}
       </Box>
     </Box>
