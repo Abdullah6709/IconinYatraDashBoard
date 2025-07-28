@@ -31,7 +31,7 @@ const validationSchema = Yup.object({
   city: Yup.string().required("Required"),
 });
 
-const AssociateDetailForm = () => {
+const AssociatesForm = () => {
   const [associateTypes, setAssociateTypes] = useState(["Type A", "Type B"]);
   const [countries, setCountries] = useState(["Albania", "India", "USA"]);
   const [states, setStates] = useState(["State 1", "State 2"]);
@@ -393,4 +393,4 @@ const AssociateDetailForm = () => {
   );
 };
 
-export default AssociateDetailForm;
+export default AssociatesForm;

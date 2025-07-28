@@ -68,7 +68,7 @@ const defaultInitialValues = {
   pincode: "",
 };
 
-const AssociateDetailForm = ({
+const AssociatesEditForm = ({
   initialValues = defaultInitialValues,
   onSubmit,
   mode = "add",
@@ -358,4 +358,4 @@ const AssociateDetailForm = ({
   );
 };
 
-export default AssociateDetailForm;
+export default AssociatesEditForm;

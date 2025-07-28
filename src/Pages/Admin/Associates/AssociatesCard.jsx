@@ -48,7 +48,7 @@ const initialAssociates = [
   },
 ];
 
-const AssociateDashboard = () => {
+const AssociatesCard = () => {
   const navigate = useNavigate();
 
   const [associateList, setAssociateList] = React.useState(initialAssociates);
@@ -185,4 +185,4 @@ const AssociateDashboard = () => {
   );
 };
 
-export default AssociateDashboard;
+export default AssociatesCard;

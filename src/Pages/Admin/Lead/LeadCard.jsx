@@ -54,7 +54,7 @@ const initialLeads = [
   },
 ];
 
-const LeadDashboard = () => {
+const LeadCard = () => {
   const navigate = useNavigate();
 
   const [leadList, setLeadList] = React.useState(initialLeads);
@@ -194,4 +194,4 @@ const LeadDashboard = () => {
   );
 };
 
-export default LeadDashboard;
+export default LeadCard;

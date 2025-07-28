@@ -44,7 +44,7 @@ const validationSchema = Yup.object().shape({
   policy: Yup.string().required("Required"),
 });
 
-const HotelEntryForm = () => {
+const HotelEditForm = () => {
   const [mode, setMode] = useState("form"); 
 
   const formik = useFormik({
@@ -205,4 +205,4 @@ const HotelEntryForm = () => {
   );
 };
 
-export default HotelEntryForm;
+export default HotelEditForm;

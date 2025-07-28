@@ -46,7 +46,7 @@ const initialStaffList = [
   },
 ];
 
-const StaffDashboard = () => {
+const StaffCard = () => {
   const navigate = useNavigate();
 
   const [staffList, setStaffList] = React.useState(initialStaffList);
@@ -184,4 +184,4 @@ const StaffDashboard = () => {
   );
 };
 
-export default StaffDashboard;
+export default StaffCard;

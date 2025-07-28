@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import React from "react";
 
-const PackagrEditForm = () => {
+const PackageEditForm = () => {
   return (
     <>
       <Typography>Package Edit Form</Typography>
@@ -9,4 +9,4 @@ const PackagrEditForm = () => {
   );
 };
 
-export default PackagrEditForm;
+export default PackageEditForm;

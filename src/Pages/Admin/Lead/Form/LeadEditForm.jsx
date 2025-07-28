@@ -26,7 +26,7 @@ const validationSchema = Yup.object({
   assignedTo: Yup.string().required("Assigned To is required"),
 });
 
-const CustomerDetailEditForm = () => {
+const LeadEditForm = () => {
   const location = useLocation();
   const customerData = location.state?.leadData || {};
 
@@ -231,4 +231,4 @@ const CustomerDetailEditForm = () => {
   );
 };
 
-export default CustomerDetailEditForm;
+export default LeadEditForm;

@@ -39,7 +39,7 @@ const initialData = [
   },
 ];
 
-const PackageDashboard = () => {
+const PackageCard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -185,4 +185,4 @@ const PackageDashboard = () => {
   );
 };
 
-export default PackageDashboard;
+export default PackageCard;

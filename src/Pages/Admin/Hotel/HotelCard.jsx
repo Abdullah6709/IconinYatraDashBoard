@@ -39,7 +39,7 @@ const initialData = [
   },
 ];
 
-const HotelDashboard = () => {
+const HotelCard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -185,4 +185,4 @@ const HotelDashboard = () => {
   );
 };
 
-export default HotelDashboard;
+export default HotelCard;

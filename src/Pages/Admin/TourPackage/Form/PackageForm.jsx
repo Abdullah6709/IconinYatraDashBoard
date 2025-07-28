@@ -26,7 +26,7 @@ const sectors = [
 const subTypes = ["Adventure", "Leisure", "Cultural"];
 const countries = ["Thailand", "France", "USA", "Japan", "Australia"];
 
-const PackageEntryForm = () => {
+const PackageForm = () => {
   const [tourType, setTourType] = useState("Domestic");
   const [locationList, setLocationList] = useState([]);
   const [stayLocationList, setStayLocationList] = useState([]);
@@ -318,4 +318,4 @@ const PackageEntryForm = () => {
   );
 };
 
-export default PackageEntryForm;
+export default PackageForm;

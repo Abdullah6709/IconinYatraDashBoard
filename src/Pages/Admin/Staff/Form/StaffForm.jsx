@@ -51,7 +51,7 @@ const validationSchema = Yup.object().shape({
   pincode: Yup.string(),
 });
 
-const StaffDetailForm = () => {
+const StaffForm = () => {
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -334,4 +334,4 @@ const StaffDetailForm = () => {
   );
 };
 
-export default StaffDetailForm;
+export default StaffForm;

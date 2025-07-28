@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
   assignedTo: Yup.string().required("Assigned To is required"),
 });
 
-const CustomerDetailForm = () => {
+const LeadForm = () => {
   const [viewMode, setViewMode] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newValue, setNewValue] = useState("");
@@ -332,4 +332,4 @@ const CustomerDetailForm = () => {
   );
 };
 
-export default CustomerDetailForm;
+export default LeadForm;
