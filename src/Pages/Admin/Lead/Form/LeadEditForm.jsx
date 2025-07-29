@@ -71,7 +71,7 @@ const LeadEditForm = () => {
           Personal Details
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField
               fullWidth
               label="First Name *"
@@ -82,26 +82,26 @@ const LeadEditForm = () => {
               helperText={formik.touched.firstName && formik.errors.firstName}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Last Name" name="lastName" value={formik.values.lastName} onChange={formik.handleChange} />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Mobile" name="mobile" value={formik.values.mobile} onChange={formik.handleChange} />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Alternate Number" name="alternateNumber" value={formik.values.alternateNumber} onChange={formik.handleChange} />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Email" name="email" value={formik.values.email} onChange={formik.handleChange} />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Title" name="title" value={formik.values.title} onChange={formik.handleChange} select>
               <MenuItem value="Mr">Mr</MenuItem>
               <MenuItem value="Ms">Ms</MenuItem>
               <MenuItem value="Mrs">Mrs</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Date Of Birth"
@@ -120,13 +120,13 @@ const LeadEditForm = () => {
           Location
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField fullWidth label="Country" name="country" value={formik.values.country} onChange={formik.handleChange} />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField fullWidth label="State" name="state" value={formik.values.state} onChange={formik.handleChange} />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField fullWidth label="City" name="city" value={formik.values.city} onChange={formik.handleChange} />
           </Grid>
         </Grid>
@@ -134,7 +134,7 @@ const LeadEditForm = () => {
 
       {/* Address & Official Detail */}
       <Grid container spacing={2} mb={2}>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md:6 }}>
           <Box border={1} borderRadius={1} p={2} height="90%">
             <Typography fontWeight="bold" mb={2}>
               Address
@@ -146,7 +146,7 @@ const LeadEditForm = () => {
           </Box>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md:6 }}>
           <Box border={1} borderRadius={1} p={2}>
             <Typography fontWeight="bold" mb={2}>
               Official Detail

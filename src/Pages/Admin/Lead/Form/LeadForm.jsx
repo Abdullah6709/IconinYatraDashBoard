@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -34,6 +35,8 @@ const LeadForm = () => {
   const [newValue, setNewValue] = useState("");
   const [activeField, setActiveField] = useState("");
   const [showAssociateForm, setShowAssociateForm] = useState(false);
+
+  const navigate = useNavigate(); 
 
   const [dropdownOptions, setDropdownOptions] = useState({
     title: ["Mr", "Ms", "Mrs"],
@@ -73,6 +76,7 @@ const LeadForm = () => {
     validationSchema,
     onSubmit: (values) => {
       console.log("Submitted values:", values);
+      navigate("/lead");
     },
   });
 

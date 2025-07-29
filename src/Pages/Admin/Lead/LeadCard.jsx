@@ -28,8 +28,8 @@ const stats = [
 const initialLeads = [
   {
     id: 1,
-    leadId: 31,
-    status: "New",
+    leadId: "ICYR_0002",
+    status: "Active",
     source: "Direct",
     name: "Jfhghj",
     mobile: "9878786778",
@@ -41,8 +41,8 @@ const initialLeads = [
   },
   {
     id: 2,
-    leadId: 30,
-    status: "New",
+    leadId: "ICYR_0003",
+    status: "Confirm",
     source: "Direct",
     name: "Andnnfn",
     mobile: "8987565753",
@@ -54,10 +54,23 @@ const initialLeads = [
   },
 ];
 
+const getStatusColor = (status) => {
+  switch (status) {
+    case "Active":
+      return "#1976d2";
+    case "Confirm":
+      return "#2e7d32";
+    case "Cancel":
+      return "#d32f2f";
+    default:
+      return "#757575";
+  }
+};
+
 const LeadCard = () => {
   const navigate = useNavigate();
-
   const [leadList, setLeadList] = React.useState(initialLeads);
+  const [searchText, setSearchText] = React.useState("");
 
   const handleAddClick = () => {
     navigate("/leadform");
@@ -72,22 +85,59 @@ const LeadCard = () => {
     setLeadList(updatedLeads);
   };
 
+  const handleRowUpdate = (newRow) => {
+    const updatedRows = leadList.map((row) =>
+      row.id === newRow.id ? { ...row, ...newRow } : row
+    );
+    setLeadList(updatedRows);
+    return newRow;
+  };
+
+  const filteredLeads = leadList.filter((lead) =>
+    Object.values(lead).some((val) =>
+      String(val).toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
+
   const columns = [
     { field: "id", headerName: "Sr No.", width: 60 },
-    { field: "leadId", headerName: "Lead Id", width: 65 },
-    { field: "status", headerName: "Status", width: 70 },
-    { field: "source", headerName: "Source", width: 70 },
+    { field: "leadId", headerName: "Lead Id", width: 100 },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      editable: true,
+      type: "singleSelect",
+      valueOptions: ["Active", "Confirm", "Cancel"],
+      renderCell: (params) => (
+        <Box
+          sx={{
+            px: 1,
+            py: 0.5,
+            borderRadius: 1,
+            fontSize: "0.75rem",
+            fontWeight: 500,
+            textAlign: "center",
+            minWidth: "70px",
+            color: getStatusColor(params.value),
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
+    },
+    { field: "source", headerName: "Source", width: 100 },
     { field: "name", headerName: "Name", width: 150 },
-    { field: "mobile", headerName: "Mobile", width: 100 },
-    { field: "email", headerName: "Email", width: 150 },
-    { field: "destination", headerName: "Destination", width: 90 },
-    { field: "arrivalDate", headerName: "Arrival Date", width: 100 },
+    { field: "mobile", headerName: "Mobile", width: 120 },
+    { field: "email", headerName: "Email", width: 180 },
+    { field: "destination", headerName: "Destination", width: 100 },
+    { field: "arrivalDate", headerName: "Arrival Date", width: 120 },
     { field: "priority", headerName: "Priority", width: 80 },
-    { field: "assignTo", headerName: "Assign To", width: 90 },
+    { field: "assignTo", headerName: "Assign To", width: 100 },
     {
       field: "action",
       headerName: "Action",
-      width: 80,
+      width: 90,
       renderCell: (params) => (
         <Box display="flex" gap={1}>
           <IconButton
@@ -163,6 +213,8 @@ const LeadCard = () => {
             variant="outlined"
             size="small"
             placeholder="Search..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
             sx={{ width: { xs: "100%", sm: 300 } }}
             InputProps={{
               endAdornment: (
@@ -180,12 +232,15 @@ const LeadCard = () => {
         <Box sx={{ width: "100%", overflowX: "auto" }}>
           <Box sx={{ minWidth: "600px" }}>
             <DataGrid
-              rows={leadList}
+              rows={filteredLeads}
               columns={columns}
               pageSize={7}
               rowsPerPageOptions={[7, 25, 50, 100]}
               autoHeight
               disableRowSelectionOnClick
+              processRowUpdate={handleRowUpdate}
+              experimentalFeatures={{ newEditingApi: true }}
+              editMode="row"
             />
           </Box>
         </Box>

@@ -11,7 +11,7 @@ import HotelForm from '../Pages/Admin/Hotel/Form/HotelForm';
 import HotelEditForm from '../Pages/Admin/Hotel/Form/HotelEditForm';
 import PackageCard from '../Pages/Admin/TourPackage/PackageCard';
 import PackageForm from '../Pages/Admin/TourPackage/Form/PackageForm';
-import PackageEditForm from '../Pages/Admin/TourPackage/Form/PackagrEditForm';
+import PackageEditForm from '../Pages/Admin/TourPackage/Form/PackageEditForm';
 import AssociatesCard from '../Pages/Admin/Associates/AssociatesCard';
 import AssociatesForm from '../Pages/Admin/Associates/Form/AssociatesForm';
 import AssociatesEditFrom from '../Pages/Admin/Associates/Form/AssociatesEditFrom';
