@@ -1,8 +1,8 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import PublicRoute from './Routes/PublicRoute';
-import MainRoute from './Routes/MainRoute';
-import NotFound from './Pages/NotFound';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import PublicRoute from "./Routes/PublicRoute";
+import MainRoute from "./Routes/MainRoute";
+import NotFound from "./Pages/NotFound";
 
 function App() {
   return (

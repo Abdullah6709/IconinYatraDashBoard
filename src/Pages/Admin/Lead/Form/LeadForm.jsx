@@ -30,13 +30,12 @@ const validationSchema = Yup.object({
 });
 
 const LeadForm = () => {
-  const [viewMode, setViewMode] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newValue, setNewValue] = useState("");
   const [activeField, setActiveField] = useState("");
   const [showAssociateForm, setShowAssociateForm] = useState(false);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const [dropdownOptions, setDropdownOptions] = useState({
     title: ["Mr", "Ms", "Mrs"],
@@ -76,7 +75,7 @@ const LeadForm = () => {
     validationSchema,
     onSubmit: (values) => {
       console.log("Submitted values:", values);
-      navigate("/lead");
+      navigate("/lead/leadtourform");
     },
   });
 
@@ -95,7 +94,9 @@ const LeadForm = () => {
     if (newValue.trim() !== "") {
       setDropdownOptions((prev) => ({
         ...prev,
-        [activeField]: [...new Set([...(prev[activeField] || []), newValue.trim()])],
+        [activeField]: [
+          ...new Set([...(prev[activeField] || []), newValue.trim()]),
+        ],
       }));
       formik.setFieldValue(activeField, newValue.trim());
       setDialogOpen(false);
@@ -129,7 +130,6 @@ const LeadForm = () => {
       name={name}
       value={formik.values[name]}
       onChange={handleFieldChange}
-      disabled={viewMode}
       error={formik.touched[name] && Boolean(formik.errors[name])}
       helperText={formik.touched[name] && formik.errors[name]}
       sx={{ mb: 2 }}
@@ -152,12 +152,13 @@ const LeadForm = () => {
       name={name}
       value={formik.values[name]}
       onChange={formik.handleChange}
-      disabled={viewMode}
       error={formik.touched[name] && Boolean(formik.errors[name])}
       helperText={formik.touched[name] && formik.errors[name]}
       sx={{ mb: 2 }}
     />
   );
+
+ 
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} p={2}>
@@ -171,28 +172,27 @@ const LeadForm = () => {
           Personal Details
         </Typography>
         <Grid container spacing={2}>
-          <Grid size={{xs:12, sm:6, md:4}}>
+          <Grid size={{xs:12, sm:6,md:4}}>
             {renderTextField("Full Name *", "fullName")}
           </Grid>
-          <Grid size={{xs:12, sm:6, md:4}}>
+          <Grid size={{xs:12, sm:6,md:4}}>
             {renderTextField("Mobile", "mobile")}
           </Grid>
-          <Grid size={{xs:12, sm:6, md:4}}>
+          <Grid size={{xs:12, sm:6,md:4}}>
             {renderTextField("Alternate Number", "alternateNumber")}
           </Grid>
-          <Grid size={{xs:12, sm:6, md:4}}>
+          <Grid size={{xs:12, sm:6,md:4}}>
             {renderTextField("Email", "email")}
           </Grid>
-          <Grid size={{xs:12, sm:6, md:4}}>
+          <Grid size={{xs:12, sm:6,md:4}}>
             {renderSelectField("Title", "title", dropdownOptions.title)}
           </Grid>
-          <Grid size={{xs:12, sm:6, md:4}}>
+          <Grid size={{xs:12, sm:6,md:4}}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Date Of Birth"
                 value={formik.values.dob}
                 onChange={(value) => formik.setFieldValue("dob", value)}
-                disabled={viewMode}
                 renderInput={(params) => (
                   <TextField fullWidth sx={{ mb: 2 }} {...params} />
                 )}
@@ -240,7 +240,7 @@ const LeadForm = () => {
               Official Detail
             </Typography>
 
-            <FormControl component="fieldset" sx={{ mb: 2 }} disabled={viewMode}>
+            <FormControl component="fieldset" sx={{ mb: 2 }}>
               <FormLabel component="legend">Business Type</FormLabel>
               <RadioGroup
                 row
@@ -253,18 +253,34 @@ const LeadForm = () => {
               </RadioGroup>
             </FormControl>
 
-            {renderSelectField("Priority", "priority", dropdownOptions.priority)}
+            {renderSelectField(
+              "Priority",
+              "priority",
+              dropdownOptions.priority
+            )}
             {renderSelectField("Source *", "source", dropdownOptions.source)}
 
             {formik.values.businessType === "B2B" &&
               formik.values.source === "Referral" &&
-              renderSelectField("Referral By", "referralBy", dropdownOptions.referralBy)}
+              renderSelectField(
+                "Referral By",
+                "referralBy",
+                dropdownOptions.referralBy
+              )}
 
             {formik.values.businessType === "B2B" &&
               formik.values.source === "Agent's" &&
-              renderSelectField("Agent Name", "agentName", dropdownOptions.agentName)}
+              renderSelectField(
+                "Agent Name",
+                "agentName",
+                dropdownOptions.agentName
+              )}
 
-            {renderSelectField("Assigned To *", "assignedTo", dropdownOptions.assignedTo)}
+            {renderSelectField(
+              "Assigned To *",
+              "assignedTo",
+              dropdownOptions.assignedTo
+            )}
           </Box>
         </Grid>
       </Grid>
@@ -279,26 +295,17 @@ const LeadForm = () => {
           fullWidth
           value={formik.values.note}
           onChange={formik.handleChange}
-          disabled={viewMode}
         />
       </Box>
 
       {/* Buttons */}
       <Box display="flex" justifyContent="center" gap={2}>
-        {!viewMode ? (
-          <Button variant="contained" color="primary" onClick={() => setViewMode(true)}>
-            View
-          </Button>
-        ) : (
-          <>
-            <Button variant="outlined" onClick={formik.handleReset}>
-              Clear
-            </Button>
-            <Button variant="contained" type="submit">
-              Submit
-            </Button>
-          </>
-        )}
+        <Button variant="outlined" onClick={formik.handleReset}>
+          Clear
+        </Button>
+        <Button variant="contained" type="submit" >
+          Save & Continue
+        </Button>
       </Box>
 
       {/* Add New Dialog */}

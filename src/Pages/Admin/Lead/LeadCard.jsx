@@ -11,11 +11,14 @@ import {
   InputAdornment,
   IconButton,
   Container,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const stats = [
   { title: "Today's", active: 0, confirmed: 0, cancelled: 0 },
@@ -29,7 +32,7 @@ const initialLeads = [
   {
     id: 1,
     leadId: "ICYR_0002",
-    status: "Active",
+    status: "Default",
     source: "Direct",
     name: "Jfhghj",
     mobile: "9878786778",
@@ -41,8 +44,8 @@ const initialLeads = [
   },
   {
     id: 2,
-    leadId: "ICYR_0003",
-    status: "Confirm",
+    leadId: "ICYR_0002",
+    status: "Default",
     source: "Direct",
     name: "Andnnfn",
     mobile: "8987565753",
@@ -54,23 +57,10 @@ const initialLeads = [
   },
 ];
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case "Active":
-      return "#1976d2";
-    case "Confirm":
-      return "#2e7d32";
-    case "Cancel":
-      return "#d32f2f";
-    default:
-      return "#757575";
-  }
-};
-
 const LeadCard = () => {
   const navigate = useNavigate();
   const [leadList, setLeadList] = React.useState(initialLeads);
-  const [searchText, setSearchText] = React.useState("");
+  const [anchorEls, setAnchorEls] = React.useState({});
 
   const handleAddClick = () => {
     navigate("/leadform");
@@ -85,77 +75,78 @@ const LeadCard = () => {
     setLeadList(updatedLeads);
   };
 
-  const handleRowUpdate = (newRow) => {
-    const updatedRows = leadList.map((row) =>
-      row.id === newRow.id ? { ...row, ...newRow } : row
-    );
-    setLeadList(updatedRows);
-    return newRow;
+  const handleMenuClick = (event, id) => {
+    setAnchorEls((prev) => ({ ...prev, [id]: event.currentTarget }));
   };
 
-  const filteredLeads = leadList.filter((lead) =>
-    Object.values(lead).some((val) =>
-      String(val).toLowerCase().includes(searchText.toLowerCase())
-    )
-  );
+  const handleMenuClose = (id) => {
+    setAnchorEls((prev) => ({ ...prev, [id]: null }));
+  };
+
+  const handleStatusChange = (id, newStatus) => {
+    setLeadList((prev) =>
+      prev.map((lead) =>
+        lead.id === id ? { ...lead, status: newStatus } : lead
+      )
+    );
+    handleMenuClose(id);
+  };
 
   const columns = [
     { field: "id", headerName: "Sr No.", width: 60 },
     { field: "leadId", headerName: "Lead Id", width: 100 },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 120,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["Active", "Confirm", "Cancel"],
-      renderCell: (params) => (
-        <Box
-          sx={{
-            px: 1,
-            py: 0.5,
-            borderRadius: 1,
-            fontSize: "0.75rem",
-            fontWeight: 500,
-            textAlign: "center",
-            minWidth: "70px",
-            color: getStatusColor(params.value),
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-    },
-    { field: "source", headerName: "Source", width: 100 },
+    { field: "status", headerName: "Status", width: 100 },
+    { field: "source", headerName: "Source", width: 80 },
     { field: "name", headerName: "Name", width: 150 },
-    { field: "mobile", headerName: "Mobile", width: 120 },
-    { field: "email", headerName: "Email", width: 180 },
+    { field: "mobile", headerName: "Mobile", width: 100 },
+    { field: "email", headerName: "Email", width: 150 },
     { field: "destination", headerName: "Destination", width: 100 },
-    { field: "arrivalDate", headerName: "Arrival Date", width: 120 },
+    { field: "arrivalDate", headerName: "Arrival Date", width: 100 },
     { field: "priority", headerName: "Priority", width: 80 },
     { field: "assignTo", headerName: "Assign To", width: 100 },
     {
       field: "action",
       headerName: "Action",
-      width: 90,
-      renderCell: (params) => (
-        <Box display="flex" gap={1}>
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={() => handleEditClick(params.row)}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            color="error"
-            size="small"
-            onClick={() => handleDeleteClick(params.row.id)}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </Box>
-      ),
+      width: 120,
+      renderCell: (params) => {
+        const rowId = params.row.id;
+        return (
+          <Box display="flex" gap={1} alignItems="center">
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() => handleEditClick(params.row)}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              color="error"
+              size="small"
+              onClick={() => handleDeleteClick(params.row.id)}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+            <IconButton size="small" onClick={(e) => handleMenuClick(e, rowId)}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEls[rowId]}
+              open={Boolean(anchorEls[rowId])}
+              onClose={() => handleMenuClose(rowId)}
+            >
+              <MenuItem onClick={() => handleStatusChange(rowId, "Active")}>
+                Active
+              </MenuItem>
+              <MenuItem onClick={() => handleStatusChange(rowId, "Confirmed")}>
+                Confirm
+              </MenuItem>
+              <MenuItem onClick={() => handleStatusChange(rowId, "Cancelled")}>
+                Cancel
+              </MenuItem>
+            </Menu>
+          </Box>
+        );
+      },
     },
   ];
 
@@ -165,7 +156,7 @@ const LeadCard = () => {
         {/* Stat Cards */}
         <Grid container spacing={2}>
           {stats.map((item, index) => (
-            <Grid size={{xs:12, sm:6, md:4, lg:2.4}} key={index}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }} key={index}>
               <Card
                 sx={{
                   backgroundColor: "#e91e63",
@@ -178,12 +169,8 @@ const LeadCard = () => {
                     {item.title}: {item.active}
                   </Typography>
                   <Typography variant="body2">Active: {item.active}</Typography>
-                  <Typography variant="body2">
-                    Confirmed: {item.confirmed}
-                  </Typography>
-                  <Typography variant="body2">
-                    Cancelled: {item.cancelled}
-                  </Typography>
+                  <Typography variant="body2">Confirmed: {item.confirmed}</Typography>
+                  <Typography variant="body2">Cancelled: {item.cancelled}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -213,8 +200,6 @@ const LeadCard = () => {
             variant="outlined"
             size="small"
             placeholder="Search..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
             sx={{ width: { xs: "100%", sm: 300 } }}
             InputProps={{
               endAdornment: (
@@ -232,15 +217,12 @@ const LeadCard = () => {
         <Box sx={{ width: "100%", overflowX: "auto" }}>
           <Box sx={{ minWidth: "600px" }}>
             <DataGrid
-              rows={filteredLeads}
+              rows={leadList}
               columns={columns}
               pageSize={7}
               rowsPerPageOptions={[7, 25, 50, 100]}
               autoHeight
               disableRowSelectionOnClick
-              processRowUpdate={handleRowUpdate}
-              experimentalFeatures={{ newEditingApi: true }}
-              editMode="row"
             />
           </Box>
         </Box>
