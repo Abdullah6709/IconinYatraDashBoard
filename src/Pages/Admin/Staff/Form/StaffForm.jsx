@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -52,6 +53,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const StaffForm = () => {
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -74,6 +77,7 @@ const StaffForm = () => {
     validationSchema,
     onSubmit: (values) => {
       console.log("Form Data:", values);
+      navigate("/staff/staffdetail");
     },
   });
 
@@ -156,13 +160,13 @@ const StaffForm = () => {
               />
             </Grid>
             <Grid size={{xs:6}}>
-              <FormControl fullWidth required error={Boolean(errors.userRole)}>
+              <FormControl
+                fullWidth
+                required
+                error={touched.userRole && Boolean(errors.userRole)}
+              >
                 <InputLabel>User Role</InputLabel>
-                <Select
-                  name="userRole"
-                  value={values.userRole}
-                  onChange={handleChange}
-                >
+                <Select name="userRole" value={values.userRole} onChange={handleChange}>
                   {roles.map((role) => (
                     <MenuItem key={role} value={role}>
                       {role}
@@ -183,11 +187,7 @@ const StaffForm = () => {
             <Grid size={{xs:3}}>
               <FormControl fullWidth>
                 <InputLabel>Title</InputLabel>
-                <Select
-                  name="title"
-                  value={values.title}
-                  onChange={handleChange}
-                >
+                <Select name="title" value={values.title} onChange={handleChange}>
                   {titles.map((title) => (
                     <MenuItem key={title} value={title}>
                       {title}
@@ -200,7 +200,7 @@ const StaffForm = () => {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Date of Birth"
-                  value={values.dob}
+                  value={values.dob ? dayjs(values.dob) : null}
                   onChange={(date) => setFieldValue("dob", date)}
                   format="DD-MM-YYYY"
                   slotProps={{ textField: { fullWidth: true } }}

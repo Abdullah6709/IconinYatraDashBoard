@@ -20,11 +20,49 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
+// Reusable select component with Add New logic
+const SelectField = ({
+  name,
+  label,
+  value,
+  onChange,
+  options,
+  error,
+  helperText,
+  handleOpenDialog,
+}) => (
+  <TextField
+    select
+    fullWidth
+    name={name}
+    label={label}
+    value={value}
+    onChange={onChange}
+    error={error}
+    helperText={helperText}
+  >
+    {options.map((opt) =>
+      opt === "__add_new" ? (
+        <MenuItem
+          key={`add-${name}`}
+          value=""
+          onClick={() => handleOpenDialog(name)}
+        >
+          + Add New
+        </MenuItem>
+      ) : (
+        <MenuItem key={opt} value={opt}>
+          {opt}
+        </MenuItem>
+      )
+    )}
+  </TextField>
+);
+
 const LeadTourForm = () => {
-  // State for managing new items and dialog
   const [openDialog, setOpenDialog] = useState(false);
   const [currentField, setCurrentField] = useState("");
-  const [addMore, setNewItem] = useState("");
+  const [addMore, setAddMore] = useState("");
   const [customItems, setCustomItems] = useState({
     country: [],
     destination: [],
@@ -37,6 +75,25 @@ const LeadTourForm = () => {
     mealPlan: [],
     sharingType: [],
   });
+
+  const defaultOptions = {
+    country: ["France", "USA", "Japan"],
+    destination: ["Delhi", "Paris"],
+    services: ["Hotel", "Transport"],
+    arrivalCity: ["Mumbai", "Delhi"],
+    arrivalLocation: ["Airport"],
+    departureCity: ["Delhi"],
+    departureLocation: ["Hotel"],
+    hotelType: ["3 Star", "5 Star"],
+    mealPlan: ["Breakfast"],
+    sharingType: ["Twin"],
+  };
+
+  const getOptions = (field) => [
+    ...(defaultOptions[field] || []),
+    ...(customItems[field] || []),
+    "__add_new",
+  ];
 
   const formik = useFormik({
     initialValues: {
@@ -73,96 +130,68 @@ const LeadTourForm = () => {
       noOfRooms: Yup.number().required("Required").min(1, "At least 1 room"),
       country: Yup.string().when("tourType", {
         is: "International",
-        then: (schema) => schema.required("Country is required"),
-        otherwise: (schema) => schema.notRequired(),
+        then: Yup.string().required("Country is required"),
       }),
     }),
-    onSubmit: (values) => {
-      console.log("Submitted:", values);
-    },
+    onSubmit: (values) => console.log("Submitted:", values),
   });
 
-  const { values, handleChange, setFieldValue, handleSubmit, touched, errors } =
+  const { values, touched, errors, handleChange, handleSubmit, setFieldValue } =
     formik;
 
-  // Handle opening the add new dialog
-  const handleOpenDialog = (fieldName) => {
-    setCurrentField(fieldName);
+  const openAddDialog = (field) => {
+    setCurrentField(field);
     setOpenDialog(true);
   };
 
-  // Handle closing the dialog
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setNewItem("");
-  };
-
-  // Handle adding a new item
-  const handleAddNewItem = () => {
+  const handleAddItem = () => {
     if (addMore.trim()) {
       setCustomItems((prev) => ({
         ...prev,
         [currentField]: [...prev[currentField], addMore.trim()],
       }));
       setFieldValue(currentField, addMore.trim());
-      handleCloseDialog();
+      setAddMore("");
+      setOpenDialog(false);
     }
   };
 
-  // Get options for a specific field including default and custom items
-  const getOptionsForField = (fieldName) => {
-    const defaultOptions = {
-      country: ["France", "USA", "Japan"],
-      destination: ["Delhi", "Paris"],
-      services: ["Hotel", "Transport"],
-      arrivalCity: ["Mumbai", "Delhi"],
-      arrivalLocation: ["Airport"],
-      departureCity: ["Delhi"],
-      departureLocation: ["Hotel"],
-      hotelType: ["3 Star", "5 Star"],
-      mealPlan: ["Breakfast"],
-      sharingType: ["Twin"],
-    };
-
-    return [
-      ...(defaultOptions[fieldName] || []),
-      ...(customItems[fieldName] || []),
-      { value: "__add_new", label: "+ Add New" },
-    ];
-  };
+  const renderTextInputs = [
+    { name: "adults", label: "No of Adults", required: true },
+    { name: "children", label: "No of Children(6-12)" },
+    { name: "kidsWithoutMattress", label: "No of Kids(2-5)" },
+    { name: "infants", label: "No of Infants" },
+    { name: "noOfRooms", label: "No of Rooms", required: true },
+    { name: "noOfMattress", label: "No of Mattress" },
+    { name: "noOfNights", label: "No of Nights" },
+  ];
 
   return (
     <Box p={3}>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6">Tour Detail Form</Typography>
 
-        {/* Add New Item Dialog */}
-        <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New {currentField}</DialogTitle>
           <DialogContent>
             <TextField
-              autoFocus
-              margin="dense"
-              label={`New ${currentField}`}
               fullWidth
+              autoFocus
               value={addMore}
-              onChange={(e) => setNewItem(e.target.value)}
+              onChange={(e) => setAddMore(e.target.value)}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={handleAddNewItem} color="primary">
-              Add
-            </Button>
+            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button onClick={handleAddItem}>Add</Button>
           </DialogActions>
         </Dialog>
 
+        {/* Tour Type */}
         <Box mt={2} p={2} border={1} borderRadius={2} borderColor="grey.300">
-          <Typography variant="subtitle1" gutterBottom>
-            Basic Tour Details
-          </Typography>
+          <Typography variant="subtitle1">Basic Tour Details</Typography>
           <Grid container spacing={2}>
-            <Grid size={{xs:12, md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl>
                 <FormLabel>Tour Type</FormLabel>
                 <RadioGroup
@@ -186,141 +215,67 @@ const LeadTourForm = () => {
             </Grid>
 
             {values.tourType === "International" && (
-              <Grid size={{xs:12, md:6}}>
-                <TextField
-                  select
-                  fullWidth
+              <Grid size={{ xs: 12, md: 6 }}>
+                <SelectField
                   name="country"
                   label="Country"
                   value={values.country}
                   onChange={handleChange}
+                  options={getOptions("country")}
                   error={touched.country && Boolean(errors.country)}
                   helperText={touched.country && errors.country}
-                >
-                  {getOptionsForField("country").map((option) =>
-                    option.value === "__add_new" ? (
-                      <MenuItem
-                        key="add-new-country"
-                        value=""
-                        onClick={() => handleOpenDialog("country")}
-                      >
-                        + Add New
-                      </MenuItem>
-                    ) : (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    )
-                  )}
-                </TextField>
+                  handleOpenDialog={openAddDialog}
+                />
               </Grid>
             )}
 
-            <Grid size={{xs:12, md:6}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 6 }}>
+              <SelectField
                 name="destination"
                 label="Tour Destination"
                 value={values.destination}
                 onChange={handleChange}
+                options={getOptions("destination")}
                 error={touched.destination && Boolean(errors.destination)}
                 helperText={touched.destination && errors.destination}
-              >
-                {getOptionsForField("destination").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-destination"
-                      value=""
-                      onClick={() => handleOpenDialog("destination")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
 
-            <Grid size={{xs:12}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12 }}>
+              <SelectField
                 name="services"
                 label="Services Required"
                 value={values.services}
                 onChange={handleChange}
+                options={getOptions("services")}
                 error={touched.services && Boolean(errors.services)}
                 helperText={touched.services && errors.services}
-              >
-                {getOptionsForField("services").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-service"
-                      value=""
-                      onClick={() => handleOpenDialog("services")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
 
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                fullWidth
-                name="adults"
-                label="No of Adults"
-                value={values.adults}
-                onChange={handleChange}
-                error={touched.adults && Boolean(errors.adults)}
-                helperText={touched.adults && errors.adults}
-              />
-            </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                fullWidth
-                name="children"
-                label="No of Children(6-12)"
-                value={values.children}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                fullWidth
-                name="kidsWithoutMattress"
-                label="No of Kids(2-5)"
-                value={values.kidsWithoutMattress}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                fullWidth
-                name="infants"
-                label="No of Infants"
-                value={values.infants}
-                onChange={handleChange}
-              />
-            </Grid>
+            {renderTextInputs.slice(0, 4).map(({ name, label, required }) => (
+              <Grid size={{ xs: 12, md: 3 }} key={name}>
+                <TextField
+                  fullWidth
+                  name={name}
+                  label={label}
+                  value={values[name]}
+                  onChange={handleChange}
+                  error={touched[name] && Boolean(errors[name])}
+                  helperText={touched[name] && errors[name]}
+                />
+              </Grid>
+            ))}
           </Grid>
         </Box>
 
+        {/* Pickup / Drop Section */}
         <Box mt={3} p={2} border={1} borderRadius={2} borderColor="grey.300">
-          <Typography variant="subtitle1" gutterBottom>
-            Pickup/Drop
-          </Typography>
+          <Typography variant="subtitle1">Pickup/Drop</Typography>
           <Grid container spacing={2}>
-            <Grid size={{xs:12, md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <DatePicker
                 label="Arrival Date"
                 value={values.arrivalDate}
@@ -335,60 +290,27 @@ const LeadTourForm = () => {
                 )}
               />
             </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="arrivalCity"
                 label="Arrival City"
                 value={values.arrivalCity}
                 onChange={handleChange}
-              >
-                {getOptionsForField("arrivalCity").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-arrival-city"
-                      value=""
-                      onClick={() => handleOpenDialog("arrivalCity")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                options={getOptions("arrivalCity")}
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="arrivalLocation"
                 label="Arrival Location"
                 value={values.arrivalLocation}
                 onChange={handleChange}
-              >
-                {getOptionsForField("arrivalLocation").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-arrival-location"
-                      value=""
-                      onClick={() => handleOpenDialog("arrivalLocation")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                options={getOptions("arrivalLocation")}
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
-
-            <Grid size={{xs:12, md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <DatePicker
                 label="Departure Date"
                 value={values.departureDate}
@@ -405,119 +327,54 @@ const LeadTourForm = () => {
                 )}
               />
             </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="departureCity"
                 label="Departure City"
                 value={values.departureCity}
                 onChange={handleChange}
-              >
-                {getOptionsForField("departureCity").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-departure-city"
-                      value=""
-                      onClick={() => handleOpenDialog("departureCity")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                options={getOptions("departureCity")}
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="departureLocation"
                 label="Departure Location"
                 value={values.departureLocation}
                 onChange={handleChange}
-              >
-                {getOptionsForField("departureLocation").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-departure-location"
-                      value=""
-                      onClick={() => handleOpenDialog("departureLocation")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                options={getOptions("departureLocation")}
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
           </Grid>
         </Box>
 
+        {/* Accommodation */}
         <Box mt={3} p={2} border={1} borderRadius={2} borderColor="grey.300">
-          <Typography variant="subtitle1" gutterBottom>
-            Accommodation & Facility
-          </Typography>
+          <Typography variant="subtitle1">Accommodation & Facility</Typography>
           <Grid container spacing={2}>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="hotelType"
                 label="Hotel Type"
                 value={values.hotelType}
                 onChange={handleChange}
-              >
-                {getOptionsForField("hotelType").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-hotel-type"
-                      value=""
-                      onClick={() => handleOpenDialog("hotelType")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                options={getOptions("hotelType")}
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="mealPlan"
                 label="Meal Plan"
                 value={values.mealPlan}
                 onChange={handleChange}
-              >
-                {getOptionsForField("mealPlan").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-meal-plan"
-                      value=""
-                      onClick={() => handleOpenDialog("mealPlan")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
+                options={getOptions("mealPlan")}
+                handleOpenDialog={openAddDialog}
+              />
             </Grid>
-            <Grid size={{xs:12, md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <FormControl>
                 <FormLabel>Transport</FormLabel>
                 <RadioGroup
@@ -535,63 +392,29 @@ const LeadTourForm = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid size={{xs:12, md:3}}>
-              <TextField
-                select
-                fullWidth
+            <Grid size={{ xs: 12, md: 3 }}>
+              <SelectField
                 name="sharingType"
                 label="Sharing Type"
                 value={values.sharingType}
                 onChange={handleChange}
+                options={getOptions("sharingType")}
                 error={touched.sharingType && Boolean(errors.sharingType)}
                 helperText={touched.sharingType && errors.sharingType}
-              >
-                {getOptionsForField("sharingType").map((option) =>
-                  option.value === "__add_new" ? (
-                    <MenuItem
-                      key="add-new-sharing-type"
-                      value=""
-                      onClick={() => handleOpenDialog("sharingType")}
-                    >
-                      + Add New
-                    </MenuItem>
-                  ) : (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )
-                )}
-              </TextField>
-            </Grid>
-            <Grid size={{xs:4}}>
-              <TextField
-                fullWidth
-                name="noOfRooms"
-                label="No of Rooms"
-                value={values.noOfRooms}
-                onChange={handleChange}
-                error={touched.noOfRooms && Boolean(errors.noOfRooms)}
-                helperText={touched.noOfRooms && errors.noOfRooms}
+                handleOpenDialog={openAddDialog}
               />
             </Grid>
-            <Grid size={{xs:4}}>
-              <TextField
-                fullWidth
-                name="noOfMattress"
-                label="No of Mattress"
-                value={values.noOfMattress}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:4}}>
-              <TextField
-                fullWidth
-                name="noOfNights"
-                label="No of Nights"
-                value={values.noOfNights}
-                onChange={handleChange}
-              />
-            </Grid>
+            {renderTextInputs.slice(4).map(({ name, label }) => (
+              <Grid size={{ xs: 12, md: 4 }} key={name}>
+                <TextField
+                  fullWidth
+                  name={name}
+                  label={label}
+                  value={values[name]}
+                  onChange={handleChange}
+                />
+              </Grid>
+            ))}
           </Grid>
         </Box>
 
