@@ -49,15 +49,12 @@ const MainRoute = () => {
         {/* Associates Route */}
         <Route path="/associates" element={<AssociatesCard />} />
         <Route path="/associatesform" element={<AssociatesForm />} />
-        <Route
-          path="/associates/associateseditform"
-          element={<AssociatesEditFrom />}
-        />
+        <Route path="/associates/associateseditform" element={<AssociatesEditFrom />} />
 
         {/* Staff Route */}
         <Route path="/staff" element={<StaffCard />} />
         <Route path="/staffform" element={<StaffForm />} />
-        <Route path="/staff/staffdetail" element={<StaffFormDetail />} />
+        {/* <Route path="/staff/staffdetail" element={<StaffFormDetail />} /> */}
       </Routes>
     </DashboardLayout>
   ) : (

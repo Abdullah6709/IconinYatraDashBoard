@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -16,6 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import dayjs from "dayjs";
+import StaffFormDetail from "./StaffFormDetail";
 
 const titles = ["Mr", "Mrs", "Ms", "Dr"];
 const roles = ["Admin", "Manager", "Executive"];
@@ -53,6 +54,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const StaffForm = () => {
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -76,8 +78,12 @@ const StaffForm = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log("Form Data:", values);
-      navigate("/staff/staffdetail");
+      if (step === 1) {
+        setStep(2);
+      } else {
+        console.log("Form Data:", values);
+        navigate("/staffform");
+      }
     },
   });
 
@@ -97,237 +103,267 @@ const StaffForm = () => {
         Staff Detail Form
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* Personal Details */}
-        <Box border={1} borderColor="divider" borderRadius={2} p={2} mb={3}>
-          <Typography variant="subtitle1" gutterBottom>
-            Staff's Personal Details
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid size={{xs:6}}>
-              <TextField
-                name="firstName"
-                label="First Name"
-                fullWidth
-                required
-                value={values.firstName}
-                onChange={handleChange}
-                error={touched.firstName && Boolean(errors.firstName)}
-                helperText={touched.firstName && errors.firstName}
-              />
-            </Grid>
-            <Grid size={{xs:6}}>
-              <TextField
-                name="lastName"
-                label="Last Name"
-                fullWidth
-                required
-                value={values.lastName}
-                onChange={handleChange}
-                error={touched.lastName && Boolean(errors.lastName)}
-                helperText={touched.lastName && errors.lastName}
-              />
-            </Grid>
-            <Grid size={{xs:6}}>
-              <TextField
-                name="mobile"
-                label="Mobile Number"
-                fullWidth
-                value={values.mobile}
-                onChange={handleChange}
-                error={touched.mobile && Boolean(errors.mobile)}
-                helperText={touched.mobile && errors.mobile}
-              />
-            </Grid>
-            <Grid size={{xs:6}}>
-              <TextField
-                name="alternateContact"
-                label="Alternate Contact"
-                fullWidth
-                value={values.alternateContact}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:6}}>
-              <TextField
-                name="designation"
-                label="Designation"
-                fullWidth
-                required
-                value={values.designation}
-                onChange={handleChange}
-                error={touched.designation && Boolean(errors.designation)}
-                helperText={touched.designation && errors.designation}
-              />
-            </Grid>
-            <Grid size={{xs:6}}>
-              <FormControl
-                fullWidth
-                required
-                error={touched.userRole && Boolean(errors.userRole)}
+        {step === 1 && (
+          <>
+            {/* Personal Details */}
+            <Box border={1} borderColor="divider" borderRadius={2} p={2} mb={3}>
+              <Typography variant="subtitle1" gutterBottom>
+                Staff's Personal Details
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="firstName"
+                    label="First Name"
+                    fullWidth
+                    required
+                    value={values.firstName}
+                    onChange={handleChange}
+                    error={touched.firstName && Boolean(errors.firstName)}
+                    helperText={touched.firstName && errors.firstName}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="lastName"
+                    label="Last Name"
+                    fullWidth
+                    required
+                    value={values.lastName}
+                    onChange={handleChange}
+                    error={touched.lastName && Boolean(errors.lastName)}
+                    helperText={touched.lastName && errors.lastName}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="mobile"
+                    label="Mobile Number"
+                    fullWidth
+                    value={values.mobile}
+                    onChange={handleChange}
+                    error={touched.mobile && Boolean(errors.mobile)}
+                    helperText={touched.mobile && errors.mobile}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="alternateContact"
+                    label="Alternate Contact"
+                    fullWidth
+                    value={values.alternateContact}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="designation"
+                    label="Designation"
+                    fullWidth
+                    required
+                    value={values.designation}
+                    onChange={handleChange}
+                    error={touched.designation && Boolean(errors.designation)}
+                    helperText={touched.designation && errors.designation}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <FormControl
+                    fullWidth
+                    required
+                    error={touched.userRole && Boolean(errors.userRole)}
+                  >
+                    <InputLabel>User Role</InputLabel>
+                    <Select
+                      name="userRole"
+                      value={values.userRole}
+                      onChange={handleChange}
+                    >
+                      {roles.map((role) => (
+                        <MenuItem key={role} value={role}>
+                          {role}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="email"
+                    label="Email Id"
+                    fullWidth
+                    value={values.email}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid size={{ xs: 3 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Title</InputLabel>
+                    <Select
+                      name="title"
+                      value={values.title}
+                      onChange={handleChange}
+                    >
+                      {titles.map((title) => (
+                        <MenuItem key={title} value={title}>
+                          {title}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 3 }}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Date of Birth"
+                      value={values.dob ? dayjs(values.dob) : null}
+                      onChange={(date) => setFieldValue("dob", date)}
+                      format="DD-MM-YYYY"
+                      slotProps={{ textField: { fullWidth: true } }}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              </Grid>
+            </Box>
+
+            {/* Location */}
+            <Box border={1} borderColor="divider" borderRadius={2} p={2} mb={3}>
+              <Typography variant="subtitle1" gutterBottom>
+                Staff's Location
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 4 }}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Country</InputLabel>
+                    <Select
+                      name="country"
+                      value={values.country}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setFieldValue("state", "");
+                        setFieldValue("city", "");
+                      }}
+                    >
+                      {countries.map((c) => (
+                        <MenuItem key={c} value={c}>
+                          {c}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <FormControl fullWidth required>
+                    <InputLabel>State</InputLabel>
+                    <Select
+                      name="state"
+                      value={values.state}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setFieldValue("city", "");
+                      }}
+                      disabled={!values.country}
+                    >
+                      {(states[values.country] || []).map((s) => (
+                        <MenuItem key={s} value={s}>
+                          {s}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <FormControl fullWidth required>
+                    <InputLabel>City</InputLabel>
+                    <Select
+                      name="city"
+                      value={values.city}
+                      onChange={handleChange}
+                      disabled={!values.state}
+                    >
+                      {(cities[values.state] || []).map((c) => (
+                        <MenuItem key={c} value={c}>
+                          {c}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Box>
+
+            {/* Address Section */}
+            <Box border={1} borderColor="divider" borderRadius={2} p={2} mb={3}>
+              <Typography variant="subtitle1" gutterBottom>
+                Address
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    name="address1"
+                    label="Address Line 1"
+                    placeholder="Address Line1"
+                    fullWidth
+                    value={values.address1}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    name="address2"
+                    label="Address Line 2"
+                    placeholder="Address Line2"
+                    fullWidth
+                    value={values.address2}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="address3"
+                    label="Address Line 3"
+                    placeholder="Address Line3"
+                    fullWidth
+                    value={values.address3}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <TextField
+                    name="pincode"
+                    label="Pincode"
+                    placeholder="Pincode"
+                    fullWidth
+                    value={values.pincode}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <StaffFormDetail formik={formik} />
+          </>
+        )}
+
+        <Box display="flex" gap={2} justifyContent="center" mt={3}>
+          {step === 1 && (
+            <>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => resetForm()}
               >
-                <InputLabel>User Role</InputLabel>
-                <Select name="userRole" value={values.userRole} onChange={handleChange}>
-                  {roles.map((role) => (
-                    <MenuItem key={role} value={role}>
-                      {role}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{xs:6}}>
-              <TextField
-                name="email"
-                label="Email Id"
-                fullWidth
-                value={values.email}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:3}}>
-              <FormControl fullWidth>
-                <InputLabel>Title</InputLabel>
-                <Select name="title" value={values.title} onChange={handleChange}>
-                  {titles.map((title) => (
-                    <MenuItem key={title} value={title}>
-                      {title}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{xs:3}}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Date of Birth"
-                  value={values.dob ? dayjs(values.dob) : null}
-                  onChange={(date) => setFieldValue("dob", date)}
-                  format="DD-MM-YYYY"
-                  slotProps={{ textField: { fullWidth: true } }}
-                />
-              </LocalizationProvider>
-            </Grid>
-          </Grid>
-        </Box>
-
-        {/* Location */}
-        <Box border={1} borderColor="divider" borderRadius={2} p={2} mb={3}>
-          <Typography variant="subtitle1" gutterBottom>
-            Staff's Location
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid size={{xs:4}}>
-              <FormControl fullWidth required>
-                <InputLabel>Country</InputLabel>
-                <Select
-                  name="country"
-                  value={values.country}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setFieldValue("state", "");
-                    setFieldValue("city", "");
-                  }}
-                >
-                  {countries.map((c) => (
-                    <MenuItem key={c} value={c}>
-                      {c}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{xs:4}}>
-              <FormControl fullWidth required>
-                <InputLabel>State</InputLabel>
-                <Select
-                  name="state"
-                  value={values.state}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setFieldValue("city", "");
-                  }}
-                  disabled={!values.country}
-                >
-                  {(states[values.country] || []).map((s) => (
-                    <MenuItem key={s} value={s}>
-                      {s}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{xs:4}}>
-              <FormControl fullWidth required>
-                <InputLabel>City</InputLabel>
-                <Select
-                  name="city"
-                  value={values.city}
-                  onChange={handleChange}
-                  disabled={!values.state}
-                >
-                  {(cities[values.state] || []).map((c) => (
-                    <MenuItem key={c} value={c}>
-                      {c}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Box>
-
-        {/* Address */}
-        <Box border={1} borderColor="divider" borderRadius={2} p={2} mb={3}>
-          <Typography variant="subtitle1" gutterBottom>
-            Address
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid size={{xs:12}}>
-              <TextField
-                name="address1"
-                label="Address Line 1"
-                fullWidth
-                value={values.address1}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:12}}>
-              <TextField
-                name="address2"
-                label="Address Line 2"
-                fullWidth
-                value={values.address2}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:9}}>
-              <TextField
-                name="address3"
-                label="Address Line 3"
-                fullWidth
-                value={values.address3}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid size={{xs:3}}>
-              <TextField
-                name="pincode"
-                label="Pincode"
-                fullWidth
-                value={values.pincode}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
-        </Box>
-
-        <Box display="flex" gap={2} justifyContent="center">
-          <Button variant="contained" color="error" onClick={() => resetForm()}>
-            Clear
-          </Button>
-          <Button variant="contained" type="submit">
-            Save & Continue
-          </Button>
+                Clear
+              </Button>
+              <Button variant="contained" type="submit">
+                Save & Continue
+              </Button>
+            </>
+          )}
         </Box>
       </form>
     </Box>

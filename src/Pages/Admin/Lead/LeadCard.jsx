@@ -19,6 +19,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  getAllLeads,
+  fetchLeadsReports,
+} from "../../../features/leads/leadSlice";
 
 const stats = [
   { title: "Today's", active: 0, confirmed: 0, cancelled: 0 },
@@ -28,42 +33,33 @@ const stats = [
   { title: "Last 12 Months", active: 15, confirmed: 0, cancelled: 0 },
 ];
 
-const initialLeads = [
-  {
-    id: 1,
-    leadId: "ICYR_0002",
-    status: "Default",
-    source: "Direct",
-    name: "Jfhghj",
-    mobile: "9878786778",
-    email: "hghgj@gmail.com",
-    destination: "",
-    arrivalDate: "2025-08-01",
-    priority: "High",
-    assignTo: "Agent A",
-  },
-  {
-    id: 2,
-    leadId: "ICYR_0002",
-    status: "Default",
-    source: "Direct",
-    name: "Andnnfn",
-    mobile: "8987565753",
-    email: "ajfjf@gmail.com",
-    destination: "",
-    arrivalDate: "2025-08-02",
-    priority: "Medium",
-    assignTo: "Agent B",
-  },
-];
+
 
 const LeadCard = () => {
   const navigate = useNavigate();
-  const [leadList, setLeadList] = React.useState(initialLeads);
+ 
   const [anchorEls, setAnchorEls] = React.useState({});
 
+  const dispatch = useDispatch();
+
+  const {
+    list: leadList = [],
+    status,
+    error,
+  } = useSelector((state) => state.leads);
+  const {
+    reports: stats = [],
+    loading: statsLoading,
+    error: statsError,
+  } = useSelector((state) => state.leads);
+
+  useEffect(() => {
+    dispatch(getAllLeads());
+    dispatch(fetchLeadsReports());
+  }, [dispatch]);
+
   const handleAddClick = () => {
-    navigate("/leadform");
+    navigate("/lead/leadtourform");
   };
 
   const handleEditClick = (row) => {
@@ -91,6 +87,24 @@ const LeadCard = () => {
     );
     handleMenuClose(id);
   };
+
+  const mappedLeads = leadList.map((lead, index) => ({
+    id: index + 1,
+    leadId: lead.leadId || "-",
+    status: lead.status || "New",
+    source: lead.officialDetail?.source || "-",
+    name: lead.personalDetails?.fullName || "-",
+    mobile: lead.personalDetails?.mobile || "-",
+    email: lead.personalDetails?.emailId || "-",
+    destination: lead.location?.city || "-",
+    arrivalDate: lead.arrivalDate || "-",
+    priority: lead.officialDetail?.priority || "-",
+    assignTo:
+      lead.officialDetail?.assignedTo ||
+      lead.officialDetail?.assinedTo || // fallback for typo
+      "-",
+    originalData: lead,
+  }));
 
   const columns = [
     { field: "id", headerName: "Sr No.", width: 60 },
@@ -169,8 +183,12 @@ const LeadCard = () => {
                     {item.title}: {item.active}
                   </Typography>
                   <Typography variant="body2">Active: {item.active}</Typography>
-                  <Typography variant="body2">Confirmed: {item.confirmed}</Typography>
-                  <Typography variant="body2">Cancelled: {item.cancelled}</Typography>
+                  <Typography variant="body2">
+                    Confirmed: {item.confirmed}
+                  </Typography>
+                  <Typography variant="body2">
+                    Cancelled: {item.cancelled}
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
