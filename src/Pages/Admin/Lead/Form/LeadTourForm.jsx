@@ -275,7 +275,7 @@ const LeadTourForm = () => {
         <Box mt={3} p={2} border={1} borderRadius={2} borderColor="grey.300">
           <Typography variant="subtitle1">Pickup/Drop</Typography>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <DatePicker
                 label="Arrival Date"
                 value={values.arrivalDate}
@@ -290,7 +290,7 @@ const LeadTourForm = () => {
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <SelectField
                 name="arrivalCity"
                 label="Arrival City"
@@ -300,7 +300,7 @@ const LeadTourForm = () => {
                 handleOpenDialog={openAddDialog}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <SelectField
                 name="arrivalLocation"
                 label="Arrival Location"
@@ -310,7 +310,7 @@ const LeadTourForm = () => {
                 handleOpenDialog={openAddDialog}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <DatePicker
                 label="Departure Date"
                 value={values.departureDate}
@@ -327,7 +327,7 @@ const LeadTourForm = () => {
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <SelectField
                 name="departureCity"
                 label="Departure City"
@@ -337,7 +337,7 @@ const LeadTourForm = () => {
                 handleOpenDialog={openAddDialog}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <SelectField
                 name="departureLocation"
                 label="Departure Location"

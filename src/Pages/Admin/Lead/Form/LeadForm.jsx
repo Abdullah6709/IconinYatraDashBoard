@@ -172,6 +172,9 @@ const LeadForm = () => {
           Personal Details
         </Typography>
         <Grid container spacing={2}>
+           <Grid size={{xs:12, sm:6,md:4}}>
+            {renderSelectField("Title", "title", dropdownOptions.title)}
+          </Grid>
           <Grid size={{xs:12, sm:6,md:4}}>
             {renderTextField("Full Name *", "fullName")}
           </Grid>
@@ -184,9 +187,7 @@ const LeadForm = () => {
           <Grid size={{xs:12, sm:6,md:4}}>
             {renderTextField("Email", "email")}
           </Grid>
-          <Grid size={{xs:12, sm:6,md:4}}>
-            {renderSelectField("Title", "title", dropdownOptions.title)}
-          </Grid>
+         
           <Grid size={{xs:12, sm:6,md:4}}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker

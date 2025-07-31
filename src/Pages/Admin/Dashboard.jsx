@@ -360,7 +360,7 @@ const CalendarDashboard = () => {
                       />
                     </Grid>
                     <Grid size={{ xs: 6 }}>
-                      <Field
+                      <Field sx={{width:"150px"}}
                         component={MuiSelect}
                         name="lead"
                         label="Lead"
@@ -374,7 +374,7 @@ const CalendarDashboard = () => {
                       </Field>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
-                      <Field
+                      <Field sx={{width:"150px"}}
                         component={MuiSelect}
                         name="agent"
                         label="Agent"
@@ -388,7 +388,7 @@ const CalendarDashboard = () => {
                       </Field>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
-                      <Field
+                      <Field sx={{width:"150px"}}
                         component={MuiSelect}
                         name="staff"
                         label="Staff"
@@ -402,7 +402,7 @@ const CalendarDashboard = () => {
                       </Field>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
-                      <Field
+                      <Field sx={{width:"150px"}}
                         component={MuiSelect}
                         name="vendor"
                         label="Vender"
@@ -416,7 +416,7 @@ const CalendarDashboard = () => {
                       </Field>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
-                      <Field
+                      <Field sx={{width:"150px"}}
                         component={MuiSelect}
                         name="priority"
                         label="Priority"
@@ -432,7 +432,7 @@ const CalendarDashboard = () => {
                       </Field>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
-                      <Field
+                      <Field sx={{width:"150px"}}
                         component={MuiSelect}
                         name="type"
                         label="Type"

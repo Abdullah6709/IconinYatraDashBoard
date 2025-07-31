@@ -35,8 +35,7 @@ const cities = {
 };
 
 const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required("Required"),
-  lastName: Yup.string().required("Required"),
+  fullName: Yup.string().required("Required"),
   mobile: Yup.string().required("Required"),
   alternateContact: Yup.string(),
   designation: Yup.string().required("Required"),
@@ -59,8 +58,7 @@ const StaffForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      fullName: "",
       mobile: "",
       alternateContact: "",
       designation: "",
@@ -111,31 +109,36 @@ const StaffForm = () => {
                 Staff's Personal Details
               </Typography>
               <Grid container spacing={2}>
-                <Grid size={{ xs: 6 }}>
+                 <Grid size={{ xs: 3 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Title</InputLabel>
+                    <Select
+                      name="title"
+                      value={values.title}
+                      onChange={handleChange}
+                    >
+                      {titles.map((title) => (
+                        <MenuItem key={title} value={title}>
+                          {title}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 3 }}>
                   <TextField
-                    name="firstName"
-                    label="First Name"
+                    name="fullName"
+                    label="Full Name"
                     fullWidth
                     required
-                    value={values.firstName}
+                    value={values.fullName}
                     onChange={handleChange}
-                    error={touched.firstName && Boolean(errors.firstName)}
-                    helperText={touched.firstName && errors.firstName}
+                    error={touched.fullName && Boolean(errors.fullName)}
+                    helperText={touched.fullName && errors.fullName}
                   />
                 </Grid>
-                <Grid size={{ xs: 6 }}>
-                  <TextField
-                    name="lastName"
-                    label="Last Name"
-                    fullWidth
-                    required
-                    value={values.lastName}
-                    onChange={handleChange}
-                    error={touched.lastName && Boolean(errors.lastName)}
-                    helperText={touched.lastName && errors.lastName}
-                  />
-                </Grid>
-                <Grid size={{ xs: 6 }}>
+               
+                <Grid size={{ xs: 3 }}>
                   <TextField
                     name="mobile"
                     label="Mobile Number"
@@ -146,7 +149,7 @@ const StaffForm = () => {
                     helperText={touched.mobile && errors.mobile}
                   />
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size={{ xs: 3 }}>
                   <TextField
                     name="alternateContact"
                     label="Alternate Contact"
@@ -155,7 +158,7 @@ const StaffForm = () => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size={{ xs: 3 }}>
                   <TextField
                     name="designation"
                     label="Designation"
@@ -167,7 +170,7 @@ const StaffForm = () => {
                     helperText={touched.designation && errors.designation}
                   />
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size={{ xs: 3 }}>
                   <FormControl
                     fullWidth
                     required
@@ -187,7 +190,7 @@ const StaffForm = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size={{ xs: 3 }}>
                   <TextField
                     name="email"
                     label="Email Id"
@@ -196,22 +199,7 @@ const StaffForm = () => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid size={{ xs: 3 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>Title</InputLabel>
-                    <Select
-                      name="title"
-                      value={values.title}
-                      onChange={handleChange}
-                    >
-                      {titles.map((title) => (
-                        <MenuItem key={title} value={title}>
-                          {title}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
+               
                 <Grid size={{ xs: 3 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker

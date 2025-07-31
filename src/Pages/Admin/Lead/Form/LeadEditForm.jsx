@@ -71,6 +71,13 @@ const LeadEditForm = () => {
           Personal Details
         </Typography>
         <Grid container spacing={2}>
+           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField fullWidth label="Title" name="title" value={formik.values.title} onChange={formik.handleChange} select>
+              <MenuItem value="Mr">Mr</MenuItem>
+              <MenuItem value="Ms">Ms</MenuItem>
+              <MenuItem value="Mrs">Mrs</MenuItem>
+            </TextField>
+          </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField
               fullWidth
@@ -82,6 +89,7 @@ const LeadEditForm = () => {
               helperText={formik.touched.firstName && formik.errors.firstName}
             />
           </Grid>
+          
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Last Name" name="lastName" value={formik.values.lastName} onChange={formik.handleChange} />
           </Grid>
@@ -94,13 +102,7 @@ const LeadEditForm = () => {
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField fullWidth label="Email" name="email" value={formik.values.email} onChange={formik.handleChange} />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <TextField fullWidth label="Title" name="title" value={formik.values.title} onChange={formik.handleChange} select>
-              <MenuItem value="Mr">Mr</MenuItem>
-              <MenuItem value="Ms">Ms</MenuItem>
-              <MenuItem value="Mrs">Mrs</MenuItem>
-            </TextField>
-          </Grid>
+         
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
