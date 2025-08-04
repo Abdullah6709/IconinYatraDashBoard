@@ -37,7 +37,7 @@ const validationSchema = Yup.object({
   ifscCode: Yup.string(),
 });
 
-const StaffFirmForm = () => {
+const AssociatesDetailform = () => {
   const [firmTypes, setFirmTypes] = useState([
     "Proprietorship",
     "Partnership",
@@ -325,4 +325,4 @@ const StaffFirmForm = () => {
   );
 };
 
-export default StaffFirmForm;
+export default AssociatesDetailform;

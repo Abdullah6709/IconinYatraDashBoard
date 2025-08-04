@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../Pages/Admin/Dashboard";
-
 import DashboardLayout from "../Layout/DashboardLayout";
 import LeadCard from "../Pages/Admin/Lead/LeadCard";
 import LeadForm from "../Pages/Admin/Lead/Form/LeadForm";
@@ -18,7 +17,7 @@ import AssociatesEditFrom from "../Pages/Admin/Associates/Form/AssociatesEditFro
 import StaffCard from "../Pages/Admin/Staff/StaffCard";
 import StaffForm from "../Pages/Admin/Staff/Form/StaffForm";
 import LeadTourForm from "../Pages/Admin/Lead/Form/LeadTourForm";
-import StaffFormDetail from "../Pages/Admin/Staff/Form/StaffFormDetail";
+//import StaffFormDetail from "../Pages/Admin/Staff/Form/StaffFormDetail";
 const MainRoute = () => {
   const isAuthenticated = true;
 

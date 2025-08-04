@@ -17,6 +17,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import AssociatesDetailform from "./AssociatesDetailform"; // Step 2
 
 const titles = ["Mr.", "Ms.", "Mrs.", "Dr."];
 
@@ -32,15 +33,16 @@ const validationSchema = Yup.object({
 });
 
 const AssociatesForm = () => {
+  const [step, setStep] = useState(1);
   const [associateTypes, setAssociateTypes] = useState(["Type A", "Type B"]);
   const [countries, setCountries] = useState(["Albania", "India", "USA"]);
   const [states, setStates] = useState(["State 1", "State 2"]);
   const [cities, setCities] = useState(["City 1", "City 2"]);
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogLabel, setDialogLabel] = useState("");
-  const [dialogType, setDialogType] = useState(""); // associateType | country | state | city
+  const [dialogType, setDialogType] = useState("");
   const [newValue, setNewValue] = useState("");
+  const [stepOneData, setStepOneData] = useState(null);
 
   const openAddDialog = (label, type) => {
     setDialogLabel(label);
@@ -81,12 +83,27 @@ const AssociatesForm = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log("Form Submitted", values);
+      setStepOneData(values); // Store step 1 data
+      setStep(2); // Go to next step
     },
-    onReset: () => {
-      formik.resetForm();
-    },
+    onReset: () => formik.resetForm(),
   });
+
+  // Step 2 rendering
+  if (step === 2) {
+    return (
+      <AssociatesDetailform
+        onBack={() => setStep(1)}
+        onFinish={(stepTwoData) => {
+          const finalData = {
+            ...stepOneData,
+            ...stepTwoData,
+          };
+          console.log("Final Submission:", finalData);
+        }}
+      />
+    );
+  }
 
   return (
     <Box p={2} border="1px solid #ccc" borderRadius={2} position="relative">
@@ -99,14 +116,13 @@ const AssociatesForm = () => {
       </IconButton>
 
       <Typography variant="h6" gutterBottom>
-        Associate Detail Form
+        Step 1: Associate Personal Details
       </Typography>
 
       <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-        {/* Personal Details */}
         <Box mb={2}>
           <Typography fontWeight="bold" mb={1}>
-            Associate’s Personal Details
+            Personal Details
           </Typography>
           <Grid container spacing={2}>
             <Grid size={{xs:12, sm:6, md:3}}>
@@ -215,7 +231,7 @@ const AssociatesForm = () => {
                   value={formik.values.dob}
                   onChange={(value) => formik.setFieldValue("dob", value)}
                   renderInput={(params) => (
-                    <TextField {...params} fullWidth size="small" name="dob" />
+                    <TextField {...params} fullWidth size="small" />
                   )}
                 />
               </LocalizationProvider>
@@ -223,10 +239,9 @@ const AssociatesForm = () => {
           </Grid>
         </Box>
 
-        {/* Location */}
         <Box mb={2}>
           <Typography fontWeight="bold" mb={1}>
-            Associate’s Location
+            Location
           </Typography>
           <Grid container spacing={2}>
             <Grid size={{xs:12, sm:4}}>
@@ -310,7 +325,6 @@ const AssociatesForm = () => {
           </Grid>
         </Box>
 
-        {/* Address */}
         <Box mb={2}>
           <Typography fontWeight="bold" mb={1}>
             Address
@@ -359,7 +373,6 @@ const AssociatesForm = () => {
           </Grid>
         </Box>
 
-        {/* Actions */}
         <Box display="flex" justifyContent="center" gap={2} mt={3}>
           <Button type="reset" variant="contained" color="info">
             Clear
@@ -370,7 +383,6 @@ const AssociatesForm = () => {
         </Box>
       </form>
 
-      {/* Add New Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Add New {dialogLabel}</DialogTitle>
         <DialogContent>
