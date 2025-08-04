@@ -17,8 +17,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import AssociatesDetailform from "./AssociatesDetailform"; // Step 2
-
+import AssociatesDetailform from "./AssociatesDetailform"; 
 const titles = ["Mr.", "Ms.", "Mrs.", "Dr."];
 
 const validationSchema = Yup.object({
@@ -83,13 +82,13 @@ const AssociatesForm = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      setStepOneData(values); // Store step 1 data
-      setStep(2); // Go to next step
+      setStepOneData(values); 
+      setStep(2); 
     },
     onReset: () => formik.resetForm(),
   });
 
-  // Step 2 rendering
+  
   if (step === 2) {
     return (
       <AssociatesDetailform

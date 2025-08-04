@@ -31,7 +31,7 @@ const stats = [
 const initialLeads = [
   {
     id: 1,
-    leadId: "ICYR_0002",
+    leadId: "ICYR_0001",
     status: "Default",
     source: "Direct",
     name: "Jfhghj",
@@ -169,8 +169,12 @@ const LeadCard = () => {
                     {item.title}: {item.active}
                   </Typography>
                   <Typography variant="body2">Active: {item.active}</Typography>
-                  <Typography variant="body2">Confirmed: {item.confirmed}</Typography>
-                  <Typography variant="body2">Cancelled: {item.cancelled}</Typography>
+                  <Typography variant="body2">
+                    Confirmed: {item.confirmed}
+                  </Typography>
+                  <Typography variant="body2">
+                    Cancelled: {item.cancelled}
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
